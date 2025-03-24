@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: main.c
+ * $File: template.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* main.c:
-           This files is use to initialice microcontroller features.
+/* template.c:
+               Use this template for your source code files.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -39,15 +39,6 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-/* main function called from reset handler. */
-int main (void)
-{
-    while(true)
-    {
-        
-    }
-    return EXIT_SUCCESS;
-}
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

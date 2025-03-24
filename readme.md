@@ -10,6 +10,8 @@
 
 3. **makefile**: this is used to build entire project. makefile will create obj and bin folders during build process.
 
+4. **report**: this folder contains Map files and compilation logs.
+
 ### doc: contains microcontroller documentation and templates for src files and header files.
 
 1. stm32f429zi: datasheet, reference manual.
