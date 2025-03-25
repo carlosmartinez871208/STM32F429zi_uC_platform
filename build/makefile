@@ -37,18 +37,12 @@ INC_PATH =\
 
 # Source directory:
 SRC_PATH = ../src
+ASW_PATH = $(SRC_PATH)/asw
+BSW_PATH = $(SRC_PATH)/bsw
 
 # Log file:
 LOG_FILE = $(LOG_PATH)/report.log
 LOG_CMD  = 2>&1 | tee -a $(LOG_FILE)
-
-# Call source files within folders:
-define makeallmodules
-    for dir in $(SRC_PATH)/*;\
-        do\
-        make -C $$dir $(1);\
-        done
-endef
 
 # Flags:
 CC = arm-none-eabi-gcc
@@ -65,7 +59,15 @@ else
 	SYSCALLS = 
 endif
 
-.PHONY: all build clean link_build post_build start_build
+# Call makefiles within src/
+define makeaswmodules
+    for dir in $(ASW_PATH)/*;\
+        do\
+        make -C $$dir $(1);\
+        done
+endef
+
+.PHONY: all asw bsw config
 
 all:
 	@mkdir -p $(BIN_PATH)
@@ -73,24 +75,25 @@ all:
 	@mkdir -p $(OBJ_PATH)
 	@d=$$(date +%s); $(MAKE) "build" $(LOG_CMD) && echo "Building time: $$(date --utc --date=@$$(($$(date +%s)-d)) '+%H:%M:%S')" $(LOG_CMD)
 	
-build: start_build link_build post_build
+build: config bsw asw
 
-start_build:
+config:
 	@echo $(PROJECT) "project build date: "$(shell date '+%Y-%m-%d %H:%M:%S')
 	@echo ''
-	@echo $(PROJECT) "project: building started..."
+	@echo "Building started...!"
+	@echo ''
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../src/main.c -o $(OBJ_PATH)/main.o
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/startup_code_files/stm32f429zi_startup.c -o $(OBJ_PATH)/stm32f429zi_startup.o
 	$(SYSCALLS) 
-	@echo''
-	@$(call makeallmodules,all)
-	@echo "Building done!!!"
-	@echo''
+	@echo ''
 
-link_build:
+asw:
+	@echo ''
+	@echo "Building ASW ...!"
+	@$(call makeaswmodules,all)
 
-
-post_build:
+bsw:
+	@$(MAKE) -C $(BSW_PATH)
 
 
 clean:
