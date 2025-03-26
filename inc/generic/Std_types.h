@@ -31,29 +31,29 @@
 /* Unsigned types: */
 /* 32 bits data type. */
 #ifndef uint32_t
- typedef unsigned int uint32_t;
+ typedef unsigned long  uint32_t;
 #endif
 /* 16 bits data type. */
 #ifndef uint16_t
- typedef unsigned short int uint16_t;
+ typedef unsigned short uint16_t;
 #endif
 /* 8 bits data type. */
 #ifndef uint8_t
- typedef unsigned char uint8_t;
+ typedef unsigned char  uint8_t;
 #endif
 
 /* Signed types: */
 /* 32 bits data type. */
 #ifndef sint32_t
- typedef signed int sint32_t;
+ typedef signed long  sint32_t;
 #endif
 /* 16 bits data type. */
 #ifndef sint16_t
- typedef signed short int sint16_t;
+ typedef signed short sint16_t;
 #endif
 /* 8 bits data type. */
 #ifndef sint8_t
- typedef signed char sint8_t;
+ typedef signed char  sint8_t;
 #endif
 
 /* Bool (boolean) type: */

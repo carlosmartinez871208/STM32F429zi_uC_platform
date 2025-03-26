@@ -44,18 +44,22 @@ BSW_PATH = $(SRC_PATH)/bsw
 LOG_FILE = $(LOG_PATH)/report.log
 LOG_CMD  = 2>&1 | tee -a $(LOG_FILE)
 
-# Flags:
+# Compiler variables:
 CC = arm-none-eabi-gcc
+OC = arm-none-eabi-objcopy
+OD = arm-none-eabi-objdump
+
+#Flags
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
 CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
 
 # Check if user has selected standard library integration.
 STDLIB =
 ifeq ($(STDLIB),Y)
-    LFLAGS = -mcpu=$(MACH) -mthumb $(INC_PATH) --specs=nano.specs -T $(LINKER_SCRIP)
+    LFLAGS = -mcpu=$(MACH) -mthumb $(INC_PATH) --specs=nano.specs -T $(LINKER_SCRIP) -Wl,-Map=$(BIN_PATH)/$(PROJECT).map
 	SYSCALLS = $(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/sys/syscalls.c -o $(OBJ_PATH)/syscalls.o
 else
-    LFLAGS = -mcpu=$(MACH) -mthumb $(INC_PATH) -nostdlib -T $(LINKER_SCRIP)
+    LFLAGS = -mcpu=$(MACH) -mthumb $(INC_PATH) -nostdlib -T $(LINKER_SCRIP) -Wl,-Map=$(BIN_PATH)/$(PROJECT).map
 	SYSCALLS = 
 endif
 
@@ -67,7 +71,7 @@ define makeaswmodules
         done
 endef
 
-.PHONY: all asw bsw config
+.PHONY: all asw bsw config link post_build
 
 all:
 	@mkdir -p $(BIN_PATH)
@@ -75,13 +79,14 @@ all:
 	@mkdir -p $(OBJ_PATH)
 	@d=$$(date +%s); $(MAKE) "build" $(LOG_CMD) && echo "Building time: $$(date --utc --date=@$$(($$(date +%s)-d)) '+%H:%M:%S')" $(LOG_CMD)
 	
-build: config bsw asw
+build: config bsw asw link post_build stats
 
 config:
 	@echo $(PROJECT) "project build date: "$(shell date '+%Y-%m-%d %H:%M:%S')
 	@echo ''
 	@echo "Building started...!"
 	@echo ''
+	@echo "Building configuration files ...!"
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../src/main.c -o $(OBJ_PATH)/main.o
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/startup_code_files/stm32f429zi_startup.c -o $(OBJ_PATH)/stm32f429zi_startup.o
 	$(SYSCALLS) 
@@ -94,6 +99,25 @@ asw:
 
 bsw:
 	@$(MAKE) -C $(BSW_PATH)
+
+link:
+	@echo ''
+	@echo "Linking ...!"
+	$(CC) $(LFLAGS) $(OBJ_PATH)/*.o -o $(TARGET)
+	@echo "Linking done!!!"
+
+post_build:
+	@echo ''
+	@echo "Generating binary ...! "
+	$(OC) -O binary $(TARGET) $(TARGET).bin
+	@echo "Binary generated!!!"
+
+stats:
+	@echo ''
+	@echo "Analyzing .elf ...!"
+	$(OD) -h $(TARGET)
+	@echo "Analysis done!!!"
+	@echo ''
 
 
 clean:
