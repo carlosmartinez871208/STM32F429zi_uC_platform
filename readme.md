@@ -40,8 +40,6 @@
 
 > 1.1 **mcal**: microcontroller abstraction layer.
 
->> 1.1.1 **lld**: low level drivers.
-
 > 1.2 **hal**: hardware abstraction layer.
 
 > 1.3 **services**: contains all services.
@@ -68,18 +66,79 @@
     │       └── template.h
     ├── inc
     │   ├── generic
+    │   │   └── Std_types.h
     │   └── stm32f429zi
     ├── readme.md
     ├── settings
     │   ├── linker_files
-    │   └── startup_code_files
+    │   │   └── stm32f429zi_ls.ld
+    │   ├── startup_code_files
+    │   │   └── stm32f429zi_startup.c
+    │   └── sys
+    │       └── syscalls.c
     └── src
-        ├── asw
+    ├── asw
+        │   └── module
+        │       ├── inc
+        │       │   └── aswmod.h
+        │       ├── makefile
+        │       └── src
+        │           └── awsmod.c
         ├── bsw
         │   ├── complex_drivers
+        │   │   └── module
+        │   │       ├── inc
+        │   │       │   └── cdrmod.h
+        │   │       ├── makefile
+        │   │       └── src
+        │   │           └── cdrmod.c
         │   ├── hal
+        │   │   └── module
+        │   │       ├── inc
+        │   │       │   └── halmod.h
+        │   │       ├── makefile
+        │   │       └── src
+        │   │           └── halmod.c
+        │   ├── makefile
         │   ├── mcal
-        │   │   └── lld
+        │   │   └── module
+        │   │       ├── inc
+        │   │       │   └── mcalmod.h
+        │   │       ├── makefile
+        │   │       └── src
+        │   │           └── mcalmod.c
         │   └── services
+        │       └── module
+        │           ├── inc
+        │           │   └── servmod.h
+        │           ├── makefile
+        │           └── src
+        │               └── servmod.c
         ├── main.c
         └── rte
+
+As you can see, there are some folders called 'module':
+
+    module
+        ├── inc
+        │   └── mcalmod.h
+        ├── makefile
+        └── src
+            └── mcalmod.c
+
+Copy every module according your needs, just rename it automatically it all will be builded.
+
+### Project building
+
+Go to build folder and run following command (to run project without standard libraries):
+
+    make all
+
+Go to build folder and run following command (to run project with standard libraries):
+
+    make all STDLIB=Y
+
+To clean project just run
+
+    make clean
+
