@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: template.c
+ * $File: pwr.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* template.c:
-               Use this template for your source code files.
+/* pwr.c:
+          power peripheral control.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,7 +28,8 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "halmod.h"
+#include "pwr.h"
+
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -40,7 +41,22 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
+/* PWR power control register (PWR_CR): */
+/* VOS regulator voltage scaling output selection: */
+/* Set regulator voltage scaling. */
+void pwr_cr_vos_mode  (uint32_t vos_mode)
+{
+    PWR_CR |= PWR_CR_VOS_RESET;
+    PWR_CR &= vos_mode;
+}
 
+/* Select PVD level. */
+
+void pwr_cr_pvd_level (uint32_t pvd_level)
+{
+    PWR_CR &= ~(PWR_CR_PVD_RESET);
+    PWR_CR |= pvd_level;
+}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

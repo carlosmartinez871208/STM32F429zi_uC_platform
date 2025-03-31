@@ -33,7 +33,13 @@ MACH = cortex-m4
 # Header files paths:
 INC_PATH =\
 -I../inc/generic/\
--I../stm32f429zi/
+-I../inc/stm32f429zi/\
+-I../src/bsw/mcal/flash/inc/\
+-I../src/bsw/mcal/mcu_driver/\
+-I../src/bsw/mcal/pwr/inc/\
+-I../src/bsw/mcal/rcc/inc/\
+-I../src/bsw/hal/device_abstraction/inc/\
+-I../src/bsw/hal/memory_abstraction/inc/
 
 # Source directory:
 SRC_PATH = ../src
@@ -71,7 +77,7 @@ define makeaswmodules
         done
 endef
 
-.PHONY: all asw bsw config link post_build
+.PHONY: all asw bsw config init link post_build
 
 all:
 	@mkdir -p $(BIN_PATH)
@@ -79,18 +85,12 @@ all:
 	@mkdir -p $(OBJ_PATH)
 	@d=$$(date +%s); $(MAKE) "build" $(LOG_CMD) && echo "Building time: $$(date --utc --date=@$$(($$(date +%s)-d)) '+%H:%M:%S')" $(LOG_CMD)
 	
-build: config bsw asw link post_build stats
+build: init bsw asw config link post_build stats
 
-config:
+init:
 	@echo $(PROJECT) "project build date: "$(shell date '+%Y-%m-%d %H:%M:%S')
 	@echo ''
 	@echo "Building started...!"
-	@echo ''
-	@echo "Building configuration files ...!"
-	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../src/main.c -o $(OBJ_PATH)/main.o
-	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/startup_code_files/stm32f429zi_startup.c -o $(OBJ_PATH)/stm32f429zi_startup.o
-	$(SYSCALLS) 
-	@echo ''
 
 asw:
 	@echo ''
@@ -99,6 +99,14 @@ asw:
 
 bsw:
 	@$(MAKE) -C $(BSW_PATH)
+
+config:
+	@echo ''
+	@echo "Building configuration files ...!"
+	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../src/main.c -o $(OBJ_PATH)/main.o
+	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/startup_code_files/stm32f429zi_startup.c -o $(OBJ_PATH)/stm32f429zi_startup.o
+	$(SYSCALLS) 
+	@echo ''
 
 link:
 	@echo ''
@@ -118,7 +126,6 @@ stats:
 	$(OD) -h $(TARGET)
 	@echo "Analysis done!!!"
 	@echo ''
-
 
 clean:
 	@echo $(PROJECT) "project: cleaning started!"

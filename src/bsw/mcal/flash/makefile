@@ -17,7 +17,7 @@ WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werr
 CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
 
 all:
-	@echo "Building module"
+	@echo "Building module: flash."
 	$(CC) $(CFLAGS) $(WARNS) $(INCLUDES) $(SOURCES) -o $(OBJECTS)
 
 .PHONY: all

@@ -28,6 +28,8 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
+#include "device_abstraction.h"
+#include "memory_abstraction.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -312,10 +314,50 @@ void Default_Handler(void)
     }
 }
 
-/* System initilization: */
+/* System initilization:
+** system clock is: 96 MHz.
+*/
 void SystemInit (void)
 {
+    /* Power interface clock enable during sleep: */
+    power_interface_sleep_mode(true);
+    /* Regulator voltage scaling output selection: */
+    
+    /* Disable default source clock: */
+    
+    /* Wait until source clock disable is ready: */
+    
+    /* Select source clock: */
 
+    /* Wait until source clock enable is ready: */
+
+    /* Store power calibration value: */
+    
+    /* Disable main PLL */
+
+    /* Wait until PLL is ready: */
+
+    /* Select PLL source clock */
+
+    /* Configure PLL. */
+
+    /* Flash configuration block: */
+    memory_latency(FLASH_ACR_LAT_2_WS);
+    memory_prefetch(true);
+    memory_cache(true);
+    /* Set System clock: */
+
+    /* Wait until system clock is ready: */
+
+    /* Set APB1 prescaler */
+
+    /* Set APB2 prescaler */
+
+    /* Set AHB1 prescaler */
+
+    /* Set AHB2 prescaler */
+
+    /* Set AHB3 prescaler */
 }
 
 /* Entry point: Reset_Handler */
