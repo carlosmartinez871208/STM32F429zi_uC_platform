@@ -108,30 +108,30 @@ void rcc_pllcfgr_pllsrc_hse (void)
 /* Sets hsi as system clocK. */
 void rcc_cfgr_sys_clk_hsi    (void)
 {
-    RCC_CFGR &= (~RCC_CFGR_SW_RESET);
+    RCC_CFGR &= (~RCC_CFGR_SW_RESET); /* 0000 0000 & FFFF FFFC = 0000 0000 */
     while (RCC_ZERO != (RCC_CFGR & RCC_CFGR_SWS_RESET)); /* Wait until RCC_CFGR switch status is 0 */
-    RCC_CFGR &= (~RCC_CFGR_SW_0);
-    RCC_CFGR &= (~RCC_CFGR_SW_1);
-    while (RCC_ZERO != (RCC_CFGR & RCC_CFGR_SWS_HSI)); /* Wait until RCC_CFGR switch status is 0 */
+    RCC_CFGR &= (~RCC_CFGR_SW_0);     /* 0000 0000 & FFFF FFFE = 0000 0000 */
+    RCC_CFGR &= (~RCC_CFGR_SW_1);     /* 0000 0000 & FFFF FFFD = 0000 0000 */
+    while (RCC_ZERO != (RCC_CFGR & RCC_CFGR_SWS_HSI)); /* Wait until RCC_CFGR switch status is 0 (0000 0000 & 0000 000C = 0000 0000) */
 }
 /* Sets hse as system clock. */
 void rcc_cfgr_sys_clk_hse    (void)
 {
-    RCC_CFGR &= (~RCC_CFGR_SW_RESET);
+    RCC_CFGR &= (~RCC_CFGR_SW_RESET); /* 0000 0000 & FFFF FFFC = 0000 0000 */
     while (RCC_ZERO != (RCC_CFGR & RCC_CFGR_SWS_RESET)); /* Wait until RCC_CFGR switch status is 0 */
-    RCC_CFGR |= RCC_CFGR_SW_0;
-    RCC_CFGR &= (~RCC_CFGR_SW_1);
-    while (RCC_CFGR_SWS_HSE != (RCC_CFGR & RCC_CFGR_SWS_HSE)); /* Wait until RCC_CFGR switch status is 1 */
+    RCC_CFGR |= RCC_CFGR_SW_0;        /* 0000 0000 | 0000 0001 = 0000 0001 */
+    RCC_CFGR &= (~RCC_CFGR_SW_1);     /* 0000 0001 & FFFF FFFD = 0000 0001 */
+    while (RCC_CFGR_SWS_HSE != (RCC_CFGR & RCC_CFGR_SWS_HSE)); /* Wait until RCC_CFGR switch status is 1 (0000 0001 & 0000 0004 = 0000 0000) */
 }
 
 /* Sets pll as system clock. */
 void rcc_cfgr_sys_clk_pll    (void)
 {
-    RCC_CFGR &= (~RCC_CFGR_SW_RESET);
+    RCC_CFGR &= (~RCC_CFGR_SW_RESET); /* 0000 0000 & FFFF FFFC = 0000 0000 */
     while (RCC_ZERO != (RCC_CFGR & RCC_CFGR_SWS_RESET)); /* Wait until RCC_CFGR switch status is 0 */
-    RCC_CFGR &= (~RCC_CFGR_SW_0);
-    RCC_CFGR |= RCC_CFGR_SW_1;
-    while (RCC_CFGR_SWS_PLL != (RCC_CFGR & RCC_CFGR_SWS_PLL)); /* Wait until RCC_CFGR switch status is 2 */
+    RCC_CFGR &= (~RCC_CFGR_SW_0);     /* 0000 0000 & FFFF FFFE = 0000 0000 */
+    RCC_CFGR |= RCC_CFGR_SW_1;        /* 0000 0000 | 0000 0002 = 0000 0002*/
+    while (RCC_CFGR_SWS_PLL != (RCC_CFGR & RCC_CFGR_SWS_PLL)); /* Wait until RCC_CFGR switch status is 2 (0000 0002 & 0000 0008 = 0000 0000) */
 }
 
 /* Set AHB system clock divided factor. Max 180 MHz: */
