@@ -27,9 +27,11 @@
 
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
-#include "Std_types.h"
+#include "debug.h"
 #include "device_abstraction.h"
 #include "memory_abstraction.h"
+#include "Std_types.h"
+#include "system.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -48,6 +50,10 @@ extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
 
+/*                                                 Imported Variables                                                */
+/*********************************************************************************************************************/
+uint32_t sys_clk_freq;
+
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
 /* Default Handler prototype */
@@ -55,9 +61,6 @@ void Default_Handler(void);
 
 /* System init function */
 void SystemInit (void);
-
-/* main function prototype */
-extern int main (void);
 
 /* Reset Handler prototype */
 void Reset_Handler (void);
@@ -320,44 +323,41 @@ void Default_Handler(void)
 void SystemInit (void)
 {
     /* Power interface clock enable during sleep: */
-    power_interface_sleep_mode(true);
+    power_clock_interface_sleep_mode (true);
     /* Regulator voltage scaling output selection: */
-    
-    /* Disable default source clock: */
-    
-    /* Wait until source clock disable is ready: */
-    
-    /* Select source clock: */
-
-    /* Wait until source clock enable is ready: */
-
+    voltage_scaling_output_selector (PWR_CR_VOS_SCL_2);
+    /* Select source HSI as source clock: */
+    select_source_clock (internal);
     /* Store power calibration value: */
-    
-    /* Disable main PLL */
-
-    /* Wait until PLL is ready: */
-
+    programmable_voltage_detector_level_selection (PWR_CR_PVD_2_6V);
+    /* Disable main PLL: */
+    disable_source_clock (pll);
     /* Select PLL source clock */
-
-    /* Configure PLL. */
-
+    select_pll_source_clock (internal);
+    /* Configure frequency for PLL. */
+    configure_pll_clock_frequency (RCC_PLLCFGR_SYSCLK);
+    /* Enable main PLL: select pll as source clock*/
+    select_source_clock (pll);
     /* Flash configuration block: */
     memory_latency(FLASH_ACR_LAT_2_WS);
     memory_prefetch(true);
     memory_cache(true);
     /* Set System clock: */
-
-    /* Wait until system clock is ready: */
-
-    /* Set APB1 prescaler */
-
-    /* Set APB2 prescaler */
-
-    /* Set AHB1 prescaler */
-
-    /* Set AHB2 prescaler */
-
-    /* Set AHB3 prescaler */
+    select_system_clock (pll);
+    /* Set APB1 prescaler: 24 MHz. */
+    set_low_speed_prescaler (RCC_CFGR_PPRE1_DIV_4);
+    /* Set APB2 prescaler: 48 MHz. */
+    set_high_speed_prescaler (RCC_CFGR_PPRE2_DIV_2);
+    /* Set AHB prescaler: 96 MHz. */
+    set_abh_speed_prescaler (RCC_CFGR_HPRE_DIV_0);
+    /* Allow debug during sleep mode: */
+    debug_dbgmcu_cr_sleep_on ();
+    /* Debug standby mode: on. */
+    debug_dbgmcu_cr_standby_on ();
+    /* Debug stop mode: on. */
+    debug_dbgmcu_cr_stop_on ();
+    /* System Clock frequency: 96MHz */
+    sys_clk_freq=96000000ul;
 }
 
 /* Entry point: Reset_Handler */

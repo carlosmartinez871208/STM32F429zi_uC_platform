@@ -84,7 +84,7 @@
     ** PLLP = 4
     ** PLLQ = 8
 */
-#define RCC_PLLCFGR_PLLM   (8ul << 0)
+#define RCC_PLLCFGR_PLLM   (16ul << 0)
 #define RCC_PLLCFGR_PLLN   (384ul << 6)
 #define RCC_PLLCFGR_PLLP   (1ul << 16)
 #define RCC_PLLCFGR_PLLQ   (8ul << 24)
@@ -106,7 +106,7 @@
 #define RCC_CFGR_SWS_PLL       (2ul << 2) /* PLL as system clock. */
 /* HPRE: AHB prescaler: */
 #define RCC_CFGR_HPRE_RESET    (0xFul << 4) /* Reset value */
-#define RCC_CFGR_HPRE_DIV_0    (0x0ul << 4)
+#define RCC_CFGR_HPRE_DIV_0    (0x1ul << 4)
 #define RCC_CFGR_HPRE_DIV_2    (0x8ul << 4)
 #define RCC_CFGR_HPRE_DIV_4    (0x9ul << 4)
 #define RCC_CFGR_HPRE_DIV_8    (0xAul << 4)
@@ -117,14 +117,14 @@
 #define RCC_CFGR_HPRE_DIV_512  (0xFul << 4)
 /* PPRE1: APB1 prescaler: */
 #define RCC_CFGR_PPRE1_RESET   (0x7ul << 10) /* Reset value */
-#define RCC_CFGR_PPRE1_DIV_0   (0x0ul << 10)
+#define RCC_CFGR_PPRE1_DIV_0   (0x1ul << 10)
 #define RCC_CFGR_PPRE1_DIV_2   (0x4ul << 10)
 #define RCC_CFGR_PPRE1_DIV_4   (0x5ul << 10)
 #define RCC_CFGR_PPRE1_DIV_8   (0x6ul << 10)
 #define RCC_CFGR_PPRE1_DIV_16  (0x7ul << 10)
 /* PPRE2: APB2 prescaler: */
 #define RCC_CFGR_PPRE2_RESET   (0x7ul << 13) /* Reset value */
-#define RCC_CFGR_PPRE2_DIV_0   (0x0ul << 13)
+#define RCC_CFGR_PPRE2_DIV_0   (0x1ul << 13)
 #define RCC_CFGR_PPRE2_DIV_2   (0x4ul << 13)
 #define RCC_CFGR_PPRE2_DIV_4   (0x5ul << 13)
 #define RCC_CFGR_PPRE2_DIV_8   (0x6ul << 13)

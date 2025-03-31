@@ -32,6 +32,9 @@
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
+#ifndef SourceClock
+ typedef enum{internal=0u,external,pll} SourceClock;
+#endif
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
@@ -41,7 +44,18 @@
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-void power_interface_sleep_mode (bool set_pwr);
+extern void power_clock_interface_sleep_mode              (bool set_pwr);
+extern void voltage_scaling_output_selector               (uint32_t scale_mode);
+extern void programmable_voltage_detector_level_selection (uint32_t pvd_level);
+extern void select_source_clock                           (SourceClock src_clk);
+extern void disable_source_clock                          (SourceClock src_clk);
+extern void select_pll_source_clock                       (SourceClock pll_src_clk);
+extern void configure_pll_clock_frequency                 (uint32_t pll_clk_freq);
+extern void select_system_clock                           (SourceClock sys_clk);
+extern void set_low_speed_prescaler                       (uint32_t prescaler);
+extern void set_high_speed_prescaler                      (uint32_t prescaler);
+extern void set_abh_speed_prescaler                       (uint32_t prescaler);
+extern void set_abh_speed_prescaler                       (uint32_t prescaler);
 
 /*********************************************************************************************************************/
 #endif

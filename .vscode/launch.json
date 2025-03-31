@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "projectName": "STM32F429_uC_Platform",
+    "configurations": [
+        {
+            "request": "launch",
+            "type": "cortex-debug",
+            "name": "Jlink debug",
+            "cwd" : "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/bin/STM32F429zi_uC_platform",
+            "serverpath": "JLinkGDBServerCL",
+            "serverArgs": [],
+            "servertype": "jlink",
+            "device": "STM32F429ZI",
+            "interface": "swd",
+            "runToEntryPoint": "main",
+        }
+    ],
+}

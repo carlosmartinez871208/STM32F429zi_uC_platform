@@ -47,9 +47,9 @@
 #define mcu_driver_rcc_rc_hsi_enable(void)              rcc_rc_hsi_enable(void)
 #define mcu_driver_rcc_rc_hse_enable(void)              rcc_rc_hse_enable(void)
 #define mcu_driver_rcc_rc_pll_enable(void)              rcc_rc_pll_enable(void)
-#define mcu_driver_rcc_rc_hsi_disable(void)             rcc_rc_hsi_enable(void)
-#define mcu_driver_rcc_rc_hse_disable(void)             rcc_rc_hse_enable(void)
-#define mcu_driver_rcc_rc_pll_disable(void)             rcc_rc_pll_enable(void)
+#define mcu_driver_rcc_rc_hsi_disable(void)             rcc_rc_hsi_disable(void)
+#define mcu_driver_rcc_rc_hse_disable(void)             rcc_rc_hse_disable(void)
+#define mcu_driver_rcc_rc_pll_disable(void)             rcc_rc_pll_disable(void)
 /* RCC PLL Configuration Register (RCC_PLLCFGR): */
 #define mcu_driver_rcc_pllcfgr_sys_clk(uint32_t)        rcc_pllcfgr_sys_clk(uint32_t)
 #define mcu_driver_rcc_pllcfgr_pllsrc_hsi(void)         rcc_pllcfgr_pllsrc_hsi(void)

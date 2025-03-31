@@ -34,6 +34,7 @@ MACH = cortex-m4
 INC_PATH =\
 -I../inc/generic/\
 -I../inc/stm32f429zi/\
+-I../src/bsw/mcal/debug/inc/\
 -I../src/bsw/mcal/flash/inc/\
 -I../src/bsw/mcal/mcu_driver/\
 -I../src/bsw/mcal/pwr/inc/\
@@ -83,12 +84,12 @@ all:
 	@mkdir -p $(BIN_PATH)
 	@mkdir -p $(LOG_PATH)
 	@mkdir -p $(OBJ_PATH)
-	@d=$$(date +%s); $(MAKE) "build" $(LOG_CMD) && echo "Building time: $$(date --utc --date=@$$(($$(date +%s)-d)) '+%H:%M:%S')" $(LOG_CMD)
+	@d=$$(gdate +%s); $(MAKE) "build" $(LOG_CMD) && echo "Building time: $$(gdate --utc --date=@$$(($$(gdate +%s)-d)) '+%H:%M:%S')" $(LOG_CMD)
 	
 build: init bsw asw config link post_build stats
 
 init:
-	@echo $(PROJECT) "project build date: "$(shell date '+%Y-%m-%d %H:%M:%S')
+	@echo $(PROJECT) "project build date: "$(shell gdate '+%Y-%m-%d %H:%M:%S')
 	@echo ''
 	@echo "Building started...!"
 
