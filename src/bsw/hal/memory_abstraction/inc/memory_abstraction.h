@@ -40,9 +40,9 @@
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-extern void memory_latency  (uint32_t wait_states);
-extern void memory_prefetch (bool set_pref);
-extern void memory_cache    (bool set_cache);
+extern void mem_abs_set_memory_latency  (uint32_t wait_states);
+extern void mem_abs_set_memory_prefetch (bool set_pref);
+extern void mem_abs_set_memory_cache    (bool set_cache);
 
 /*********************************************************************************************************************/
 #endif

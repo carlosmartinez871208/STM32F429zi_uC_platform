@@ -42,7 +42,7 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void power_clock_interface_sleep_mode (bool set_pwr)
+void dev_abs_power_clock_interface_sleep_mode (bool set_pwr)
 {
     if(true==set_pwr)
     {
@@ -54,17 +54,17 @@ void power_clock_interface_sleep_mode (bool set_pwr)
     }
 }
 
-void voltage_scaling_output_selector (uint32_t scale_mode)
+void dev_abs_voltage_scaling_output_selector (uint32_t scale_mode)
 {
     mcu_driver_pwr_cr_vos_mode (scale_mode);
 }
 
-void programmable_voltage_detector_level_selection (uint32_t pvd_level)
+void dev_abs_programmable_voltage_detector_level_selection (uint32_t pvd_level)
 {
     mcu_driver_pwr_cr_pvd_level (pvd_level);
 }
 
-void select_source_clock (SourceClock src_clk )
+void dev_abs_select_source_clock (SourceClock src_clk )
 {
     if(internal==src_clk)
     {
@@ -80,7 +80,7 @@ void select_source_clock (SourceClock src_clk )
     }
 }
 
-void disable_source_clock (SourceClock src_clk )
+void dev_abs_disable_source_clock (SourceClock src_clk )
 {
     if(internal==src_clk)
     {
@@ -96,7 +96,7 @@ void disable_source_clock (SourceClock src_clk )
     }
 }
 
-void select_pll_source_clock (SourceClock pll_src_clk)
+void dev_abs_select_pll_source_clock (SourceClock pll_src_clk)
 {
     if(internal==pll_src_clk)
     {
@@ -112,12 +112,12 @@ void select_pll_source_clock (SourceClock pll_src_clk)
     }
 }
 
-void configure_pll_clock_frequency (uint32_t pll_clk_freq)
+void dev_abs_configure_pll_clock_frequency (uint32_t pll_clk_freq)
 {
     mcu_driver_rcc_pllcfgr_sys_clk (pll_clk_freq);
 }
 
-void select_system_clock (SourceClock sys_clk)
+void dev_abs_select_system_clock (SourceClock sys_clk)
 {
     if(internal==sys_clk)
     {
@@ -133,19 +133,43 @@ void select_system_clock (SourceClock sys_clk)
     }
 }
 
-void set_low_speed_prescaler (uint32_t prescaler)
+void dev_abs_set_low_speed_prescaler (uint32_t prescaler)
 {
     mcu_driver_rcc_cfgr_apb1_prescaler (prescaler);
 }
 
-void set_high_speed_prescaler (uint32_t prescaler)
+void dev_abs_set_high_speed_prescaler (uint32_t prescaler)
 {
     mcu_driver_rcc_cfgr_apb2_prescaler (prescaler);
 }
 
-void set_abh_speed_prescaler (uint32_t prescaler)
+void dev_abs_set_abh_speed_prescaler (uint32_t prescaler)
 {
     mcu_driver_rcc_cfgr_ahb_prescaler (prescaler);
+}
+
+void dev_abs_set_gpio_clock (uint32_t gpio_x,bool set_gpio)
+{
+    if (true == set_gpio)
+    {
+        mcu_driver_rcc_aph1enr_gpio_enable (gpio_x);
+    }
+    else
+    {
+        mcu_driver_rcc_aph1enr_gpio_disable (gpio_x);
+    }
+}
+
+void dev_abs_set_crc_clock (bool set_crc)
+{
+    if (true == set_crc)
+    {
+        mcu_driver_rcc_aph1enr_crc_enable ();
+    }
+    else
+    {
+        mcu_driver_rcc_aph1enr_crc_disable ();
+    }
 }
 
 /***************************************************Project Logs*******************************************************

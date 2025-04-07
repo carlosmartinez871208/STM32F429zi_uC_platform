@@ -42,12 +42,12 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void memory_latency  (uint32_t wait_states)
+void mem_abs_set_memory_latency  (uint32_t wait_states)
 {
     flash_acr_latency(wait_states);
 }
 
-void memory_prefetch (bool set_pref)
+void mem_abs_set_memory_prefetch (bool set_pref)
 {
     if(true==set_pref)
     {
@@ -59,7 +59,7 @@ void memory_prefetch (bool set_pref)
     }
 }
 
-void memory_cache    (bool set_cache)
+void mem_abs_set_memory_cache    (bool set_cache)
 {
     if(true==set_cache)
     {

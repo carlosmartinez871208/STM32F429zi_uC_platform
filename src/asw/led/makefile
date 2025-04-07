@@ -9,7 +9,16 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 INCLUDES =\
 -Iinc/\
 -I../../../inc/generic/\
--I../../rte/
+-I../../../inc/stm32f429zi\
+-I../../rte/\
+-I../../bsw/hal/device_abstraction/inc/\
+-I../../bsw/hal/IoHwAb/inc/\
+-I../../bsw/mcal/mcu_driver/\
+-I../../bsw/mcal/pwr/inc/\
+-I../../bsw/mcal/rcc/inc/\
+-I../../bsw/mcal/port/inc/\
+-I../../bsw/mcal/dio/inc/\
+-I../../bsw/mcal/gpio
 
 # Flags:
 CC = arm-none-eabi-gcc

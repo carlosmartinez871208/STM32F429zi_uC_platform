@@ -48,6 +48,12 @@
  #define RCC_CFGR              (*(__IO uint32_t*)(RCC_BASE_ADDRESS + RCC_CFGR_OFFSET))
 #endif
 
+/* RCC AHB1 peripheral clock register (RCC_AHB1ENR): */
+#ifndef RCC_AHB1ENR
+ #define RCC_AHB1ENR_OFFSET    (0x30ul)
+ #define RCC_AHB1ENR (*(__IO uint32_t*)(RCC_BASE_ADDRESS + RCC_AHB1ENR_OFFSET))
+#endif
+
 /* RCC APB1 peripheral clock enable in low power mode register:*/
 #ifndef RCC_APB1LPENR
  #define RCC_APB1LPENR_OFFSETT (0x60ul)
@@ -133,6 +139,22 @@
 /* RCC APB1 peripheral clock enable in low power mode register:*/
 #define RCC_APB1LPENR_PWRLPEN  (0x1ul << 28)
 
+/* RCC AHB1ENR macros: */
+/* GPIOs enable A to K */
+#define RCC_AHB1ENR_GPIOAEN    (0x1ul << 0)
+#define RCC_AHB1ENR_GPIOBEN    (0x1ul << 1)
+#define RCC_AHB1ENR_GPIOCEN    (0x1ul << 2)
+#define RCC_AHB1ENR_GPIODEN    (0x1ul << 3)
+#define RCC_AHB1ENR_GPIOEEN    (0x1ul << 4)
+#define RCC_AHB1ENR_GPIOFEN    (0x1ul << 5)
+#define RCC_AHB1ENR_GPIOGEN    (0x1ul << 6)
+#define RCC_AHB1ENR_GPIOHEN    (0x1ul << 7)
+#define RCC_AHB1ENR_GPIOIEN    (0x1ul << 8)
+#define RCC_AHB1ENR_GPIOJEN    (0x1ul << 9)
+#define RCC_AHB1ENR_GPIOKEN    (0x1ul << 10)
+/* CRC enable */
+#define RCC_AHB1ENR_CRCRN      (0x1ul << 12)
+
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
 
@@ -163,6 +185,13 @@ extern void rcc_cfgr_apb2_prescaler (uint32_t apb2_pre); /* Set APB2 system cloc
 extern void rcc_apb1lpenr_pwrlp_enable  (void); /*  Power interface clock enable during Sleep mode. */
 extern void rcc_apb1lpenr_pwrlp_disable (void); /*  Power interface clock disable during Sleep mode. */
 
+/* RCC AHB1ENR functions: */
+/* GPIOs */
+extern void rcc_aph1enr_gpio_enable  (uint32_t gpio_x_en);  /* Enable clock to gpio x. */
+extern void rcc_aph1enr_gpio_disable (uint32_t gpio_x_dis); /* Disable clock to gpio x. */
+/* CRC */
+extern void rcc_aph1enr_crc_enable (void);  /* Enable clock to CRC. */
+extern void rcc_aph1enr_crc_disable (void); /* Disable clock to CRC. */
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

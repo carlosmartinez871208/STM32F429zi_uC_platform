@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: main.c
+ * $File: port.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* main.c:
-           This files is use to initialice microcontroller features.
+/* port.c:
+           Performs MCU pin settings (I/O, shared functions)
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,9 +28,7 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "led.h"
-#include "system.h"
-#include "led.h"
+#include "port.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -43,22 +41,33 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-/* main function called from reset handler. */
-int main (void)
+void port_gpio_pin_mode_input     (gpio_type* port,uint32_t pin)
 {
-    led_init ();
-    while(true)
-    {
-        led_on ();
-        for(uint32_t i=0;i<2000000;i++){}
-        led_off ();
-        for(uint32_t i=0;i<2000000;i++){}
-    }
-    return EXIT_SUCCESS;
+    port->moder &= (~pin); /* 0000 ^ 1100 = 0000; 1111 ^ 1100 = 1100, 1011 ^1100 = 1000 */
+}
+
+void port_gpio_pin_mode_output    (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+{
+    port->moder |= pin;
+}
+
+void port_gpio_pin_mode_alternate (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+{
+    port->moder |= pin;
+}
+
+void port_gpio_pin_mode_analog    (gpio_type* port,uint32_t pin)
+{
+    port->moder |= pin; /* 0000 | 0011 = 0011; 1010 | 0011 = 1011*/
+}
+
+void port_reset_gpio_pin          (gpio_type* port,uint32_t pin)
+{
+    port->moder &= (~pin);
 }
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|
  *|         |               |             |                                                                           |
-**********************************************************************************************************************/ 
+**********************************************************************************************************************/

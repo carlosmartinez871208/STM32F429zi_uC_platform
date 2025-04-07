@@ -323,33 +323,33 @@ void Default_Handler(void)
 void SystemInit (void)
 {
     /* Power interface clock enable during sleep: */
-    power_clock_interface_sleep_mode (true);
+    dev_abs_power_clock_interface_sleep_mode (true);
     /* Regulator voltage scaling output selection: */
-    voltage_scaling_output_selector (PWR_CR_VOS_SCL_2);
+    dev_abs_voltage_scaling_output_selector (PWR_CR_VOS_SCL_2);
     /* Select source HSI as source clock: */
-    select_source_clock (internal);
+    dev_abs_select_source_clock (internal);
     /* Store power calibration value: */
-    programmable_voltage_detector_level_selection (PWR_CR_PVD_2_6V);
+    dev_abs_programmable_voltage_detector_level_selection (PWR_CR_PVD_2_6V);
     /* Disable main PLL: */
-    disable_source_clock (pll);
+    dev_abs_disable_source_clock (pll);
     /* Select PLL source clock */
-    select_pll_source_clock (internal);
+    dev_abs_select_pll_source_clock (internal);
     /* Configure frequency for PLL. */
-    configure_pll_clock_frequency (RCC_PLLCFGR_SYSCLK);
+    dev_abs_configure_pll_clock_frequency (RCC_PLLCFGR_SYSCLK);
     /* Enable main PLL: select pll as source clock*/
-    select_source_clock (pll);
+    dev_abs_select_source_clock (pll);
     /* Flash configuration block: */
-    memory_latency(FLASH_ACR_LAT_2_WS);
-    memory_prefetch(true);
-    memory_cache(true);
+    mem_abs_set_memory_latency(FLASH_ACR_LAT_2_WS);
+    mem_abs_set_memory_prefetch(true);
+    mem_abs_set_memory_cache(true);
     /* Set System clock: */
-    select_system_clock (pll);
+    dev_abs_select_system_clock (pll);
     /* Set APB1 prescaler: 24 MHz. */
-    set_low_speed_prescaler (RCC_CFGR_PPRE1_DIV_4);
+    dev_abs_set_low_speed_prescaler (RCC_CFGR_PPRE1_DIV_4);
     /* Set APB2 prescaler: 48 MHz. */
-    set_high_speed_prescaler (RCC_CFGR_PPRE2_DIV_2);
+    dev_abs_set_high_speed_prescaler (RCC_CFGR_PPRE2_DIV_2);
     /* Set AHB prescaler: 96 MHz. */
-    set_abh_speed_prescaler (RCC_CFGR_HPRE_DIV_0);
+    dev_abs_set_abh_speed_prescaler (RCC_CFGR_HPRE_DIV_0);
     /* Allow debug during sleep mode: */
     debug_dbgmcu_cr_sleep_on ();
     /* Debug standby mode: on. */

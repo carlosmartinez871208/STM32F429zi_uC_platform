@@ -156,15 +156,36 @@ void rcc_cfgr_apb2_prescaler (uint32_t apb2_pre)
 }
 
 /* RCC APB1 peripheral clock enable in low power mode register: */
-extern void rcc_apb1lpenr_pwrlp_enable  (void)
+void rcc_apb1lpenr_pwrlp_enable  (void)
 {
     RCC_APB1LPENR |= RCC_APB1LPENR_PWRLPEN;
 }
 
 /*  Power interface clock disable during Sleep mode: */
-extern void rcc_apb1lpenr_pwrlp_disable (void)
+void rcc_apb1lpenr_pwrlp_disable (void)
 {
     RCC_APB1LPENR &= (~RCC_APB1LPENR_PWRLPEN);
+}
+
+/* RCC AHB1ENR functions: */
+void rcc_aph1enr_gpio_enable (uint32_t gpio_x_en)
+{
+    RCC_AHB1ENR |= gpio_x_en;
+}
+
+void rcc_aph1enr_gpio_disable (uint32_t gpio_x_dis)
+{
+    RCC_AHB1ENR &= (~gpio_x_dis);
+}
+
+void rcc_aph1enr_crc_enable (void)
+{
+    RCC_AHB1ENR |= RCC_AHB1ENR_CRCRN;
+}
+
+void rcc_aph1enr_crc_disable (void)
+{
+    RCC_AHB1ENR &= (~RCC_AHB1ENR_CRCRN);
 }
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

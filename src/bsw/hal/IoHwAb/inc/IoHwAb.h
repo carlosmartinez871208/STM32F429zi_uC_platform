@@ -4,17 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: mcu_driver.h
+ * $File: IoHwAb.h
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* mcu_driver.h:
-               MCU (Micro Controller Unit) Driver
-               Device driver that performs MCU settings
-               Initializes clock, performs power mode settings
+/* IoHwAb.h:
+             The Input Output Hardware Abstraction, contains driver from ports, adc, port, Dio, PWM.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -23,13 +21,13 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-#ifndef MCU_DRIVER_H_
-#define MCU_DRIVER_H_
+#ifndef IO_HARDWARE_ABSTRACTION_H_
+#define IO_HARDWARE_ABSTRACTION_H_
 /*                                                       Includes                                                    */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "pwr.h"
-#include "rcc.h"
+#include "dio.h"
+#include "port.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -42,39 +40,13 @@
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-/* RCC */
-/* RCC Control Register (RCC_CR): */
-#define mcu_driver_rcc_rc_hsi_enable(void)              rcc_rc_hsi_enable(void)
-#define mcu_driver_rcc_rc_hse_enable(void)              rcc_rc_hse_enable(void)
-#define mcu_driver_rcc_rc_pll_enable(void)              rcc_rc_pll_enable(void)
-#define mcu_driver_rcc_rc_hsi_disable(void)             rcc_rc_hsi_disable(void)
-#define mcu_driver_rcc_rc_hse_disable(void)             rcc_rc_hse_disable(void)
-#define mcu_driver_rcc_rc_pll_disable(void)             rcc_rc_pll_disable(void)
-/* RCC PLL Configuration Register (RCC_PLLCFGR): */
-#define mcu_driver_rcc_pllcfgr_sys_clk(uint32_t)        rcc_pllcfgr_sys_clk(uint32_t)
-#define mcu_driver_rcc_pllcfgr_pllsrc_hsi(void)         rcc_pllcfgr_pllsrc_hsi(void)
-#define mcu_driver_rcc_pllcfgr_pllsrc_hse(void)         rcc_pllcfgr_pllsrc_hse(void)
-/* RCC Clock configuration Register: */
-#define mcu_driver_rcc_cfgr_sys_clk_hsi(void)           rcc_cfgr_sys_clk_hsi(void)
-#define mcu_driver_rcc_cfgr_sys_clk_hse(void)           rcc_cfgr_sys_clk_hse(void)
-#define mcu_driver_rcc_cfgr_sys_clk_pll(void)           rcc_cfgr_sys_clk_pll(void)
-#define mcu_driver_rcc_cfgr_ahb_prescaler(uint32_t)     rcc_cfgr_ahb_prescaler(uint32_t)
-#define mcu_driver_rcc_cfgr_apb1_prescaler(uint32_t)    rcc_cfgr_apb1_prescaler(uint32_t)
-#define mcu_driver_rcc_cfgr_apb2_prescaler(uint32_t)    rcc_cfgr_apb2_prescaler(uint32_t)
-/* RCC AHB1ENR functions: */
-/* GPIOs */
-#define mcu_driver_rcc_aph1enr_gpio_enable(uint32_t)    rcc_aph1enr_gpio_enable(uint32_t)
-#define mcu_driver_rcc_aph1enr_gpio_disable(uint32_t)   rcc_aph1enr_gpio_disable(uint32_t)
-/* CRC */
-#define mcu_driver_rcc_aph1enr_crc_enable(void)         rcc_aph1enr_crc_enable(void)
-#define mcu_driver_rcc_aph1enr_crc_disable(void)        rcc_aph1enr_crc_disable(void)
-/* RCC APB1 peripheral clock enable in low power mode register:*/
-#define mcu_driver_rcc_apb1lpenr_pwrlp_enable(void)     rcc_apb1lpenr_pwrlp_enable(void)
-#define mcu_driver_rcc_apb1lpenr_pwrlp_disable(void)    rcc_apb1lpenr_pwrlp_enable(void)
-/* PWR */
-/* PWR power control register (PWR_CR): */
-#define mcu_driver_pwr_cr_vos_mode(uint32_t)            pwr_cr_vos_mode(uint32_t)
-#define mcu_driver_pwr_cr_pvd_level(uint32_t)           pwr_cr_pvd_level(uint32_t)
+#define IoHwAb_port_pin_mode_input(gpio_type,uint32_t)      port_gpio_pin_mode_input(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_output(gpio_type,uint32_t)     port_gpio_pin_mode_output(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_alternate(gpio_type,uint32_t)  port_gpio_pin_mode_alternate(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_analog(gpio_type,uint32_t)     port_gpio_pin_mode_analog(gpio_type,uint32_t)
+#define IoHwAb_port_reset_pin(gpio_type,uint32_t)           port_reset_gpio_pin(gpio_type,uint32_t)
+#define IoHwAb_set_pin_high(gpio_type,uint32_t)             dio_gpio_pin_high(gpio_type,uint32_t)
+#define IoHwAb_set_pin_low(gpio_type,uint32_t)              dio_gpio_pin_low(gpio_type,uint32_t)
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

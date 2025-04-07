@@ -21,6 +21,9 @@ BIN_PATH = bin
 OBJ_PATH = obj
 LOG_PATH = report
 
+# Microcontroller name
+DEVICE = STM32F429ZI
+
 # Linker script file.
 LINKER_SCRIP = ../settings/linker_files/stm32f429zi_ls.ld
 
@@ -35,12 +38,17 @@ INC_PATH =\
 -I../inc/generic/\
 -I../inc/stm32f429zi/\
 -I../src/bsw/mcal/debug/inc/\
+-I../src/bsw/mcal/dio/inc/\
 -I../src/bsw/mcal/flash/inc/\
+-I../src/bsw/mcal/gpio/\
 -I../src/bsw/mcal/mcu_driver/\
+-I../src/bsw/mcal/port/inc/\
 -I../src/bsw/mcal/pwr/inc/\
 -I../src/bsw/mcal/rcc/inc/\
 -I../src/bsw/hal/device_abstraction/inc/\
--I../src/bsw/hal/memory_abstraction/inc/
+-I../src/bsw/hal/memory_abstraction/inc/\
+-I../src/bsw/hal/IoHwAb/inc/\
+-I../src/asw/led/inc/
 
 # Source directory:
 SRC_PATH = ../src
@@ -78,7 +86,7 @@ define makeaswmodules
         done
 endef
 
-.PHONY: all asw bsw config init link post_build
+.PHONY: all asw bsw clean config flash init link post_build stats
 
 all:
 	@mkdir -p $(BIN_PATH)
@@ -134,3 +142,13 @@ clean:
 	@echo $(PROJECT) "project: succesfully cleaned!!!"
 	@echo''
 
+$(BIN_PATH)/jflash: $(TARGET).bin
+	@touch $@
+	@echo Device $(DEVICE) > $@
+	@echo si 1'\n'Speed 4000 >> $@
+	@echo loadbin $< 0x08000000 >> $@
+	@echo r'\n'g'\n'qc >> $@
+
+flash: $(BIN_PATH)/jflash
+	@echo "Flashing started ...!"
+	JLinkExe -commanderscript $<
