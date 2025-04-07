@@ -28,7 +28,7 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "led.h"
+#include "button.h"
 #include "system.h"
 #include "led.h"
 
@@ -47,12 +47,17 @@
 int main (void)
 {
     led_init ();
+    button_init ();
     while(true)
     {
-        led_on ();
-        for(uint32_t i=0;i<2000000;i++){}
-        led_off ();
-        for(uint32_t i=0;i<2000000;i++){}
+        if(button_state())
+        {
+            led_on ();
+        }
+        else
+        {
+            led_off ();
+        }
     }
     return EXIT_SUCCESS;
 }

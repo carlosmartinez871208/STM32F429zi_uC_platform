@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: led.c
+ * $File: button.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* led.c:
-          controls LED functionality.
+/* button.c:
+          controls user button.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,7 +28,7 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "led.h"
+#include "button.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -40,21 +40,15 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void led_init ()
+extern void button_init ()
 {
-    dev_abs_set_gpio_clock (PORTG_CLOCK_EN,true);
-    IoHwAb_port_reset_pin (PORTG,RESET_PIN_13);
-    IoHwAb_port_pin_mode_output (PORTG,PG13_CONFIG_OUTPUT);
+    dev_abs_set_gpio_clock (PORTA_CLOCK_EN,true);
+    IoHwAb_port_pin_mode_input (PORTA,PA0_CONFIG_INPUT);
 }
 
-void led_on ()
+extern bool button_state ()
 {
-    IoHwAb_set_pin_high (PORTG,LD3);
-}
-
-void led_off ()
-{
-    IoHwAb_set_pin_low  (PORTG,LD3);
+    return IoHwAb_get_pin_state(PORTA,B1_USER);
 }
 
 /***************************************************Project Logs*******************************************************

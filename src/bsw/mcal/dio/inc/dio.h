@@ -40,8 +40,9 @@
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-extern void dio_gpio_pin_high (gpio_type* port,uint32_t output_pin);
-extern void dio_gpio_pin_low  (gpio_type* port,uint32_t output_pin);
+extern void dio_gpio_pin_high  (gpio_type* port,uint32_t output_pin);
+extern void dio_gpio_pin_low   (gpio_type* port,uint32_t output_pin);
+extern bool gio_gpio_pin_state (gpio_type* port,uint32_t output_pin);
 
 /*********************************************************************************************************************/
 #endif

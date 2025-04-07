@@ -51,6 +51,18 @@ void dio_gpio_pin_low  (gpio_type* port,uint32_t output_pin)
     port->odr &= (~output_pin);
 }
 
+bool gio_gpio_pin_state (gpio_type* port,uint32_t output_pin)
+{
+    if(port->idr & output_pin) /* Button is active high. */
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

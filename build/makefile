@@ -48,7 +48,8 @@ INC_PATH =\
 -I../src/bsw/hal/device_abstraction/inc/\
 -I../src/bsw/hal/memory_abstraction/inc/\
 -I../src/bsw/hal/IoHwAb/inc/\
--I../src/asw/led/inc/
+-I../src/asw/led/inc/\
+-I../src/asw/button/inc/
 
 # Source directory:
 SRC_PATH = ../src

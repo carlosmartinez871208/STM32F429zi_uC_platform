@@ -196,6 +196,23 @@ typedef struct
 #define GPIO_ODR_PIN_14           (0x1ul<<14)
 #define GPIO_ODR_PIN_15           (0x1ul<<15)
 
+#define GPIO_IDR_PIN_0            (0x1ul<<0)
+#define GPIO_IDR_PIN_1            (0x1ul<<1)
+#define GPIO_IDR_PIN_2            (0x1ul<<2)
+#define GPIO_IDR_PIN_3            (0x1ul<<3)
+#define GPIO_IDR_PIN_4            (0x1ul<<4)
+#define GPIO_IDR_PIN_5            (0x1ul<<5)
+#define GPIO_IDR_PIN_6            (0x1ul<<6)
+#define GPIO_IDR_PIN_7            (0x1ul<<7)
+#define GPIO_IDR_PIN_8            (0x1ul<<8)
+#define GPIO_IDR_PIN_9            (0x1ul<<9)
+#define GPIO_IDR_PIN_10           (0x1ul<<10)
+#define GPIO_IDR_PIN_11           (0x1ul<<11)
+#define GPIO_IDR_PIN_12           (0x1ul<<12)
+#define GPIO_IDR_PIN_13           (0x1ul<<13)
+#define GPIO_IDR_PIN_14           (0x1ul<<14)
+#define GPIO_IDR_PIN_15           (0x1ul<<15)
+
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
 

@@ -47,6 +47,7 @@
 #define IoHwAb_port_reset_pin(gpio_type,uint32_t)           port_reset_gpio_pin(gpio_type,uint32_t)
 #define IoHwAb_set_pin_high(gpio_type,uint32_t)             dio_gpio_pin_high(gpio_type,uint32_t)
 #define IoHwAb_set_pin_low(gpio_type,uint32_t)              dio_gpio_pin_low(gpio_type,uint32_t)
+#define IoHwAb_get_pin_state(gpio_type,uint32_t)            gio_gpio_pin_state(gpio_type,uint32_t)
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************
