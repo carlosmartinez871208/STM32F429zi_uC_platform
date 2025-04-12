@@ -54,6 +54,12 @@
  #define RCC_AHB1ENR (*(__IO uint32_t*)(RCC_BASE_ADDRESS + RCC_AHB1ENR_OFFSET))
 #endif
 
+/* RCC AHB1 peripheral clock register (RCC_AHB1ENR): */
+#ifndef RCC_APB1ENR
+ #define RCC_APB1ENR_OFFSET    (0x40ul)
+ #define RCC_APB1ENR (*(__IO uint32_t*)(RCC_BASE_ADDRESS + RCC_APB1ENR_OFFSET))
+#endif
+
 /* RCC APB1 peripheral clock enable in low power mode register:*/
 #ifndef RCC_APB1LPENR
  #define RCC_APB1LPENR_OFFSETT (0x60ul)
@@ -80,7 +86,7 @@
 
 /* RCC PLL Configuration Register (RCC_PLLCFGR): */
 /*
-    ** Configures Main PLL: see formulas form Reference Manual, page: 228.
+    ** Configures Main PLL: see formulas from Reference Manual, page: 228.
     ** HSI as clock input
     ** fvco = 384 MHz
     ** fpllout = 96 MHz
@@ -90,14 +96,14 @@
     ** PLLP = 4
     ** PLLQ = 8
 */
-#define RCC_PLLCFGR_PLLM   (16ul << 0)
-#define RCC_PLLCFGR_PLLN   (384ul << 6)
-#define RCC_PLLCFGR_PLLP   (1ul << 16)
-#define RCC_PLLCFGR_PLLQ   (8ul << 24)
+#define RCC_PLLCFGR_PLLM   (16ul << 0)  /*0x010<<00= 0000 0010*/
+#define RCC_PLLCFGR_PLLN   (384ul << 6) /*0x180<<06= 0000 6000*/
+#define RCC_PLLCFGR_PLLP   (1ul << 16)  /*0x001<<16= 0001 0000*/
+#define RCC_PLLCFGR_PLLQ   (8ul << 24)  /*0x008<<24= 0800 0000*/
 /* Configures System Clock: */
 #define RCC_PLLCFGR_SYSCLK (RCC_PLLCFGR_PLLQ|RCC_PLLCFGR_PLLP|RCC_PLLCFGR_PLLN|RCC_PLLCFGR_PLLM)
 /* PLL source clock: */
-#define RCC_PLLCFGR_PLLSRC (0x1ul << 24)
+#define RCC_PLLCFGR_PLLSRC (0x1ul << 22)
 
 /* RCC Clock configuration Register: */
 #define RCC_ZERO               (0x0ul)
@@ -154,6 +160,9 @@
 #define RCC_AHB1ENR_GPIOKEN    (0x1ul << 10)
 /* CRC enable */
 #define RCC_AHB1ENR_CRCRN      (0x1ul << 12)
+/* USART */
+#define RCC_APB1ENR_USART2EN   (0x1ul<<17)
+#define RCC_APB1ENR_USART3EN   (0x1ul<<18)
 
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
@@ -192,6 +201,11 @@ extern void rcc_aph1enr_gpio_disable (uint32_t gpio_x_dis); /* Disable clock to 
 /* CRC */
 extern void rcc_aph1enr_crc_enable (void);  /* Enable clock to CRC. */
 extern void rcc_aph1enr_crc_disable (void); /* Disable clock to CRC. */
+
+/* RCC APB2ENR functions: */
+/* USART */
+extern void rcc_apb1enr_usart_enable (uint32_t usart_en);
+extern void rcc_apb1enr_usart_disable (uint32_t usart_en);
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

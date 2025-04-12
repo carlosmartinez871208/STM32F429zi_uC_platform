@@ -40,14 +40,17 @@
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-#define IoHwAb_port_pin_mode_input(gpio_type,uint32_t)      port_gpio_pin_mode_input(gpio_type,uint32_t)
-#define IoHwAb_port_pin_mode_output(gpio_type,uint32_t)     port_gpio_pin_mode_output(gpio_type,uint32_t)
-#define IoHwAb_port_pin_mode_alternate(gpio_type,uint32_t)  port_gpio_pin_mode_alternate(gpio_type,uint32_t)
-#define IoHwAb_port_pin_mode_analog(gpio_type,uint32_t)     port_gpio_pin_mode_analog(gpio_type,uint32_t)
-#define IoHwAb_port_reset_pin(gpio_type,uint32_t)           port_reset_gpio_pin(gpio_type,uint32_t)
-#define IoHwAb_set_pin_high(gpio_type,uint32_t)             dio_gpio_pin_high(gpio_type,uint32_t)
-#define IoHwAb_set_pin_low(gpio_type,uint32_t)              dio_gpio_pin_low(gpio_type,uint32_t)
-#define IoHwAb_get_pin_state(gpio_type,uint32_t)            gio_gpio_pin_state(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_input(gpio_type,uint32_t)                     port_gpio_pin_mode_input(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_output(gpio_type,uint32_t)                    port_gpio_pin_mode_output(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_alternate(gpio_type,uint32_t)                 port_gpio_pin_mode_alternate(gpio_type,uint32_t)
+#define IoHwAb_port_pin_mode_analog(gpio_type,uint32_t)                    port_gpio_pin_mode_analog(gpio_type,uint32_t)
+#define IoHwAb_port_pin_reset(gpio_type,uint32_t)                          port_gpio_pin_reset(gpio_type,uint32_t)
+#define IoHwAb_port_pin_config_alt_mode(gpio_type,uint32_t,gpio_afr)       port_gpio_pin_config_alternate_mode(gpio_type,uint32_t,gpio_afr)
+#define IoHwAb_port_pin_config_alt_rst(gpio_type,uint32_t,gpio_afr)        port_gpio_pin_config_alternate_reset(gpio_type,uint32_t,gpio_afr)
+#define IoHwAb_port_pin_config_pull_up_down(gpio_type,uint32_t,gpio_pupdr) port_gpio_pin_config_pull_up_down(gpio_type,uint32_t,gpio_pupdr)
+#define IoHwAb_set_pin_high(gpio_type,uint32_t)                            dio_gpio_pin_high(gpio_type,uint32_t)
+#define IoHwAb_set_pin_low(gpio_type,uint32_t)                             dio_gpio_pin_low(gpio_type,uint32_t)
+#define IoHwAb_get_pin_state(gpio_type,uint32_t)                           gio_gpio_pin_state(gpio_type,uint32_t)
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

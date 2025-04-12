@@ -24,13 +24,15 @@
 
 /*                                                 Standard libraries                                                */
 /*********************************************************************************************************************/
-
+#include <stdio.h>
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
 #include "button.h"
 #include "system.h"
 #include "led.h"
+#include "log.h"
+#include "timebase.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -48,16 +50,11 @@ int main (void)
 {
     led_init ();
     button_init ();
+    log_init ();
+    timebase_init ();
     while(true)
     {
-        if(button_state())
-        {
-            led_on ();
-        }
-        else
-        {
-            led_off ();
-        }
+        
     }
     return EXIT_SUCCESS;
 }

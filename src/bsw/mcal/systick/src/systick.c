@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: template.c
+ * $File: systick.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* template.c:
-               Use this template for your source code files.
+/* systick.h:
+              configures systick timer.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,7 +28,8 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "servmod.h"
+#include "systick.h"
+
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -40,6 +41,52 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
+void systick_config_clock_cycles   (uint32_t clk_cycles)
+{
+    SYST_RVR = clk_cycles;
+}
+
+void systick_config_reset_value    (void)
+{
+    SYST_CVR = SYST_CVR_CURRENT_CLR;
+}
+
+void systick_config_select_clk_src (clock_source clk_src)
+{
+    if (ext_clock==clk_src)
+    {
+        SYST_CSR &= (~SYST_CSR_CLK_SOURCE);
+    }
+    else
+    {
+        SYST_CSR |= SYST_CSR_CLK_SOURCE;
+    }
+}
+
+void systick_config_enable_interrupt      (bool en_int)
+{
+    if(en_int==true)
+    {
+        SYST_CSR |= SYST_CSR_TICKINT;
+    }
+    else
+    {
+        SYST_CSR &= (~SYST_CSR_TICKINT);
+    }
+}
+
+void systick_config_enable         (bool en_systick)
+{
+    if(en_systick==true)
+    {
+        SYST_CSR |= SYST_CSR_ENABLE;
+    }
+    else
+    {
+        SYST_CSR &= (~SYST_CSR_ENABLE);
+    }
+}
+
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

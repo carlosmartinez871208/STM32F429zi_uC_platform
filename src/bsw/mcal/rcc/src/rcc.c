@@ -187,6 +187,16 @@ void rcc_aph1enr_crc_disable (void)
 {
     RCC_AHB1ENR &= (~RCC_AHB1ENR_CRCRN);
 }
+
+void rcc_apb1enr_usart_enable (uint32_t usart_en)
+{
+    RCC_APB1ENR |= usart_en;
+}
+
+void rcc_apb1enr_usart_disable (uint32_t usart_en)
+{
+    RCC_APB1ENR |= (~usart_en);
+}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

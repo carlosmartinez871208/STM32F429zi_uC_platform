@@ -45,11 +45,15 @@ INC_PATH =\
 -I../src/bsw/mcal/port/inc/\
 -I../src/bsw/mcal/pwr/inc/\
 -I../src/bsw/mcal/rcc/inc/\
+-I../src/bsw/mcal/systick/inc/\
 -I../src/bsw/hal/device_abstraction/inc/\
 -I../src/bsw/hal/memory_abstraction/inc/\
 -I../src/bsw/hal/IoHwAb/inc/\
+-I../src/bsw/complex_drivers/usart/inc/\
+-I../src/bsw/services/timebase/inc/\
 -I../src/asw/led/inc/\
--I../src/asw/button/inc/
+-I../src/asw/button/inc/\
+-I../src/asw/log/inc/
 
 # Source directory:
 SRC_PATH = ../src
@@ -64,6 +68,7 @@ LOG_CMD  = 2>&1 | tee -a $(LOG_FILE)
 CC = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
 OD = arm-none-eabi-objdump
+SIZE = arm-none-eabi-size
 
 #Flags
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
@@ -135,6 +140,8 @@ stats:
 	@echo "Analyzing .elf ...!"
 	$(OD) -h $(TARGET)
 	@echo "Analysis done!!!"
+	@echo ''
+	$(SIZE) $(TARGET)
 	@echo ''
 
 clean:

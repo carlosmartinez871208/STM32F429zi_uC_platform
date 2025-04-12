@@ -89,6 +89,9 @@ typedef struct
 #ifndef GPIOK
  #define GPIOK ((gpio_type*)GPIOK_BASE_ADDRESS)
 #endif
+
+typedef enum{high=0,low}gpio_afr;
+typedef enum{no=0,pup,pdown}gpio_pupdr;
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 /* GPIO Port Mode Register (GPIOx_MODER) */
@@ -212,6 +215,29 @@ typedef struct
 #define GPIO_IDR_PIN_13           (0x1ul<<13)
 #define GPIO_IDR_PIN_14           (0x1ul<<14)
 #define GPIO_IDR_PIN_15           (0x1ul<<15)
+
+#define GPIO_AFRL_RESET_PIN_0     (0xFFFFFFF0ul)
+#define GPIO_AFRL_RESET_PIN_1     (0xFFFFFF0Ful)
+#define GPIO_AFRL_RESET_PIN_2     (0xFFFFF0FFul)
+#define GPIO_AFRL_RESET_PIN_3     (0xFFFF0FFFul)
+#define GPIO_AFRL_RESET_PIN_4     (0xFFF0FFFFul)
+#define GPIO_AFRL_RESET_PIN_5     (0xFF0FFFFFul)
+#define GPIO_AFRL_RESET_PIN_6     (0xF0FFFFFFul)
+#define GPIO_AFRL_RESET_PIN_7     (0x0FFFFFFFul)
+#define GPIO_AFRH_RESET_PIN_8     (0xFFFFFFF0ul)
+#define GPIO_AFRH_RESET_PIN_9     (0xFFFFFF0Ful)
+#define GPIO_AFRH_RESET_PIN_10    (0xFFFFF0FFul)
+#define GPIO_AFRH_RESET_PIN_11    (0xFFFF0FFFul)
+#define GPIO_AFRH_RESET_PIN_12    (0xFFF0FFFFul)
+#define GPIO_AFRH_RESET_PIN_13    (0xFF0FFFFFul)
+#define GPIO_AFRH_RESET_PIN_14    (0xF0FFFFFFul)
+#define GPIO_AFRH_RESET_PIN_15    (0x0FFFFFFFul)
+
+#define GPIO_AFRL_PIN_USART2_TX   (0x7ul<<8)
+#define GPIO_AFRL_PIN_USART2_RX   (0x7ul<<12)
+
+#define GPIO_AFRH_PIN_USART3_TX   (0x7ul<<0)
+#define GPIO_AFRH_PIN_USART3_RX   (0x7ul<<4)
 
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/

@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: port.c
+ * $File: template.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* port.c:
-           Performs MCU pin settings (I/O, shared functions)
+/* template.c:
+               Use this template for your source code files.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,10 +28,12 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "port.h"
-
+#include "timebase.h"
+#include "interrupts.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
+volatile uint32_t current_tick;
+volatile uint32_t post_tick;
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
@@ -41,70 +43,49 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void port_gpio_pin_mode_input     (gpio_type* port,uint32_t pin)
+void timebase_init (void)
 {
-    port->moder &= (~pin); /* 0000 ^ 1100 = 0000; 1111 ^ 1100 = 1100, 1011 ^1100 = 1000 */
+    __disable_irq ();
+    systick_config_clock_cycles (DELAY_MS);
+    systick_config_reset_value ();
+    systick_config_select_clk_src (int_clock);
+    systick_config_enable_interrupt (true);
+    systick_config_enable (true);
+    __enable_irq();
 }
 
-void port_gpio_pin_mode_output    (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+void tick_increment (void)
 {
-    port->moder |= pin;
+    current_tick += TICK_FREQUENCY;
 }
 
-void port_gpio_pin_mode_alternate (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+/* Interrupt handler */
+void Systick_Handler (void)
 {
-    port->moder |= pin;
+    tick_increment();
 }
 
-void port_gpio_pin_mode_analog    (gpio_type* port,uint32_t pin)
+uint32_t get_tick (void)
 {
-    port->moder |= pin; /* 0000 | 0011 = 0011; 1010 | 0011 = 1011*/
+    __disable_irq();
+    post_tick = current_tick;
+    __enable_irq();
+    return post_tick;
 }
 
-void port_gpio_pin_reset          (gpio_type* port,uint32_t pin)
+void delay_ms (uint32_t delay)
 {
-    port->moder &= (~pin);
-}
-
-void port_gpio_pin_config_alternate_mode   (gpio_type* port,uint32_t pin,gpio_afr reg)
-{
-    if(low==reg)
+    unsigned int tickstart = get_tick();
+    unsigned int wait = delay;
+    if(wait < MAX_DELAY)
     {
-        port->afrl |= pin;
+        wait += TICK_FREQUENCY;
     }
     else
-    {
-        port->afrh |= pin;
-    }
+    {/* Do nothing */}
+    while ((get_tick() - tickstart) < wait){}
 }
 
-void port_gpio_pin_config_alternate_reset  (gpio_type* port,uint32_t pin,gpio_afr reg)
-{
-    if(low==reg)
-    {
-        port->afrl &= pin;
-    }
-    else
-    {
-        port->afrh &= pin;
-    }
-}
-
-void port_gpio_pin_config_pull_up_down     (gpio_type* port,uint32_t pin,gpio_pupdr reg)
-{
-    if(no==reg)
-    {
-        port->pupdr &= (~pin);
-    }
-    else if(pup==reg)
-    {
-        port->pupdr |= pin;
-    }
-    else
-    {
-        port->pupdr |= pin;
-    }
-}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

@@ -68,6 +68,9 @@
 /* CRC */
 #define mcu_driver_rcc_aph1enr_crc_enable(void)         rcc_aph1enr_crc_enable(void)
 #define mcu_driver_rcc_aph1enr_crc_disable(void)        rcc_aph1enr_crc_disable(void)
+/* USART */
+#define mcu_driver_rcc_apb1enr_usart_enable(uint32_t)   rcc_apb1enr_usart_enable(uint32_t)
+#define mcu_driver_rcc_apb1enr_usart_disable(uint32_t)  rcc_apb1enr_usart_disable(uint32_t)
 /* RCC APB1 peripheral clock enable in low power mode register:*/
 #define mcu_driver_rcc_apb1lpenr_pwrlp_enable(void)     rcc_apb1lpenr_pwrlp_enable(void)
 #define mcu_driver_rcc_apb1lpenr_pwrlp_disable(void)    rcc_apb1lpenr_pwrlp_enable(void)
@@ -75,6 +78,7 @@
 /* PWR power control register (PWR_CR): */
 #define mcu_driver_pwr_cr_vos_mode(uint32_t)            pwr_cr_vos_mode(uint32_t)
 #define mcu_driver_pwr_cr_pvd_level(uint32_t)           pwr_cr_pvd_level(uint32_t)
+
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

@@ -57,6 +57,7 @@ extern void dev_abs_set_high_speed_prescaler                      (uint32_t pres
 extern void dev_abs_set_abh_speed_prescaler                       (uint32_t prescaler);
 extern void dev_abs_set_gpio_clock                                (uint32_t gpio_x,bool set_gpio);
 extern void dev_abs_set_crc_clock                                 (bool set_crc);
+extern void dev_abs_set_usart_clock                               (uint32_t usart,bool set_usart);
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

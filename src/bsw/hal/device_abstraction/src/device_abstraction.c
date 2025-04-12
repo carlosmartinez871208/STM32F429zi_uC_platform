@@ -172,6 +172,17 @@ void dev_abs_set_crc_clock (bool set_crc)
     }
 }
 
+void dev_abs_set_usart_clock (uint32_t usart,bool set_usart)
+{
+    if (true == set_usart)
+    {
+        mcu_driver_rcc_apb1enr_usart_enable (usart);
+    }
+    else
+    {
+        mcu_driver_rcc_apb1enr_usart_disable (usart);
+    }
+}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

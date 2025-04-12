@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: port.c
+ * $File: log.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* port.c:
-           Performs MCU pin settings (I/O, shared functions)
+/* log.c:
+          it is used to send log files throught usart.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,83 +28,59 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "port.h"
-
+#include "log.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
+#define PORTD              GPIOD
+#define PORTD_CLOCK_EN     RCC_AHB1ENR_GPIODEN
+#define USART3_CLOCK_EN    RCC_APB1ENR_USART3EN
+#define RESET_PD8          RESET_PIN_8
+#define RESET_PD9          RESET_PIN_9
+#define ALTERN_PD8         GPIO_MODER_ALTERNATE_8
+#define ALTERN_PD9         GPIO_MODER_ALTERNATE_9
+#define RESET_ALTERN_PD8   GPIO_AFRH_RESET_PIN_8
+#define RESET_ALTERN_PD9   GPIO_AFRH_RESET_PIN_9
+#define USART3_RX          GPIO_AFRH_PIN_USART3_RX
+#define USART3_TX          GPIO_AFRH_PIN_USART3_TX
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void port_gpio_pin_mode_input     (gpio_type* port,uint32_t pin)
+void log_init ()
 {
-    port->moder &= (~pin); /* 0000 ^ 1100 = 0000; 1111 ^ 1100 = 1100, 1011 ^1100 = 1000 */
+    dev_abs_set_gpio_clock (PORTD_CLOCK_EN,true);
+    IoHwAb_port_pin_reset (PORTD,RESET_PD8);
+    IoHwAb_port_pin_reset (PORTD,RESET_PD9);
+    IoHwAb_port_pin_mode_alternate (PORTD,ALTERN_PD8);
+    IoHwAb_port_pin_mode_alternate (PORTD,ALTERN_PD9);
+    IoHwAb_port_pin_config_alt_rst (PORTD,RESET_ALTERN_PD8,high);
+    IoHwAb_port_pin_config_alt_rst (PORTD,RESET_ALTERN_PD9,high);
+    IoHwAb_port_pin_config_alt_mode (PORTD,USART3_RX,high);
+    IoHwAb_port_pin_config_alt_mode (PORTD,USART3_TX,high);
+    dev_abs_set_usart_clock (USART3_CLOCK_EN,true);
+    cmplx_dr_usart_config_oversamplig (USART3,USART_OVERSAMPLING_16);
+    cmplx_dr_usart_config_baudrate (USART3,USART_BAUDRATE_115200);
+    cmplx_dr_usart_config_transmitter (USART3,true);
+    cmplx_dr_usart_config_receiver (USART3,true);
+    cmplx_dr_usart_config_word_length (USART3,eight_bits);
+    cmplx_dr_usart_config_parity_control (USART3,false);
+    cmplx_dr_usart_config_stop_bits (USART3,one_stop_bit);
+    cmplx_dr_usart_config_cts (USART3,false);
+    cmplx_dr_usart_config_rts (USART3,false);
+    cmplx_dr_usart_config_enable (USART3,true);
 }
 
-void port_gpio_pin_mode_output    (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+int __io_putchar (int ch)
 {
-    port->moder |= pin;
+    cmplx_dr_usart_putchar(USART3,ch);
+    return ch;
 }
 
-void port_gpio_pin_mode_alternate (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
-{
-    port->moder |= pin;
-}
-
-void port_gpio_pin_mode_analog    (gpio_type* port,uint32_t pin)
-{
-    port->moder |= pin; /* 0000 | 0011 = 0011; 1010 | 0011 = 1011*/
-}
-
-void port_gpio_pin_reset          (gpio_type* port,uint32_t pin)
-{
-    port->moder &= (~pin);
-}
-
-void port_gpio_pin_config_alternate_mode   (gpio_type* port,uint32_t pin,gpio_afr reg)
-{
-    if(low==reg)
-    {
-        port->afrl |= pin;
-    }
-    else
-    {
-        port->afrh |= pin;
-    }
-}
-
-void port_gpio_pin_config_alternate_reset  (gpio_type* port,uint32_t pin,gpio_afr reg)
-{
-    if(low==reg)
-    {
-        port->afrl &= pin;
-    }
-    else
-    {
-        port->afrh &= pin;
-    }
-}
-
-void port_gpio_pin_config_pull_up_down     (gpio_type* port,uint32_t pin,gpio_pupdr reg)
-{
-    if(no==reg)
-    {
-        port->pupdr &= (~pin);
-    }
-    else if(pup==reg)
-    {
-        port->pupdr |= pin;
-    }
-    else
-    {
-        port->pupdr |= pin;
-    }
-}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

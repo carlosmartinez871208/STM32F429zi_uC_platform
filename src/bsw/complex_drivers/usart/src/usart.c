@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: port.c
+ * $File: usart.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* port.c:
-           Performs MCU pin settings (I/O, shared functions)
+/* usart.c:
+            usart serial communication.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -28,83 +28,182 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "port.h"
-
+#include "usart.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
-
+ 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void port_gpio_pin_mode_input     (gpio_type* port,uint32_t pin)
+void cmplx_dr_usart_config_oversamplig (usart_type* usart_port,uint32_t oversampling)
 {
-    port->moder &= (~pin); /* 0000 ^ 1100 = 0000; 1111 ^ 1100 = 1100, 1011 ^1100 = 1000 */
+    usart_port->cr1 &= (~USART_OVERSAMPLING_RST);
+    usart_port->cr1 |= oversampling;
 }
 
-void port_gpio_pin_mode_output    (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+void cmplx_dr_usart_config_baudrate (usart_type* usart_port,uint32_t baudrate)
 {
-    port->moder |= pin;
+    usart_port->brr = baudrate;
 }
 
-void port_gpio_pin_mode_alternate (gpio_type* port,uint32_t pin) /* Call reset function before calling this function. */
+void cmplx_dr_usart_config_transmitter (usart_type* usart_port,bool state)
 {
-    port->moder |= pin;
-}
-
-void port_gpio_pin_mode_analog    (gpio_type* port,uint32_t pin)
-{
-    port->moder |= pin; /* 0000 | 0011 = 0011; 1010 | 0011 = 1011*/
-}
-
-void port_gpio_pin_reset          (gpio_type* port,uint32_t pin)
-{
-    port->moder &= (~pin);
-}
-
-void port_gpio_pin_config_alternate_mode   (gpio_type* port,uint32_t pin,gpio_afr reg)
-{
-    if(low==reg)
+    if(true==state)
     {
-        port->afrl |= pin;
+        usart_port->cr1 |= USART_TRANSMITER_ENABLE;
     }
     else
     {
-        port->afrh |= pin;
+        usart_port->cr1 &= (~USART_TRANSMITER_ENABLE);
     }
 }
 
-void port_gpio_pin_config_alternate_reset  (gpio_type* port,uint32_t pin,gpio_afr reg)
+void cmplx_dr_usart_config_receiver (usart_type* usart_port,bool state)
 {
-    if(low==reg)
+    if(true==state)
     {
-        port->afrl &= pin;
+        usart_port->cr1 |= USART_RECEIVER_ENABLE;
     }
     else
     {
-        port->afrh &= pin;
+        usart_port->cr1 &= (~USART_RECEIVER_ENABLE);
     }
 }
 
-void port_gpio_pin_config_pull_up_down     (gpio_type* port,uint32_t pin,gpio_pupdr reg)
+void cmplx_dr_usart_config_word_length (usart_type* usart_port,word_length w_len)
 {
-    if(no==reg)
+    if(eight_bits==w_len)
     {
-        port->pupdr &= (~pin);
-    }
-    else if(pup==reg)
-    {
-        port->pupdr |= pin;
+        usart_port->cr1 &= (~USART_WORD_LENGTH);
     }
     else
     {
-        port->pupdr |= pin;
+        usart_port->cr1 |= USART_WORD_LENGTH;
     }
 }
+
+void cmplx_dr_usart_config_parity_control  (usart_type* usart_port,bool pce)
+{
+    if(true==pce)
+    {
+        usart_port->cr1 |= USART_PARITY_CONTROL;
+    }
+    else
+    {
+        usart_port->cr1 &= (~USART_PARITY_CONTROL);
+    }
+}
+
+void cmplx_dr_usart_config_stop_bits       (usart_type* usart_port,stop_bits num_stop_bits)
+{
+    if (one_stop_bit==num_stop_bits)
+    {
+        usart_port->cr2 &= (~USART_STOP_BIT_0);
+        usart_port->cr2 &= (~USART_STOP_BIT_1);
+    }
+    else if (dot_five_stop_bits==num_stop_bits)
+    {
+        usart_port->cr2 |= USART_STOP_BIT_0;
+        usart_port->cr2 &= (~USART_STOP_BIT_1);
+    }
+    else if (two_stop_bits==num_stop_bits)
+    {
+        usart_port->cr2 &= (~USART_STOP_BIT_0);
+        usart_port->cr2 |= USART_STOP_BIT_1;
+    }
+    else
+    {
+        usart_port->cr2 |= USART_STOP_BIT_0;
+        usart_port->cr2 |= USART_STOP_BIT_1;
+    }
+}
+
+void cmplx_dr_usart_config_cts             (usart_type* usart_port,bool state)
+{
+    if(true==state)
+    {
+        usart_port->cr3 |= USART_CTS_ENABLE;
+    }
+    else
+    {
+        usart_port->cr3 &= (~USART_CTS_ENABLE);
+    }
+}
+
+void cmplx_dr_usart_config_rts             (usart_type* usart_port,bool state)
+{
+    if(true==state)
+    {
+        usart_port->cr3 |= USART_RTS_ENABLE;
+    }
+    else
+    {
+        usart_port->cr3 &= (~USART_RTS_ENABLE);
+    }
+}
+
+extern void cmplx_dr_usart_config_tx_interrupt    (usart_type* usart_port,bool state)
+{
+    if(true==state)
+    {
+        usart_port->cr1 |= USART_TX_INTERRUPT_EN;
+    }
+    else
+    {
+        usart_port->cr1 &= (~USART_TX_INTERRUPT_EN);
+    }
+}
+
+extern void cmplx_dr_usart_config_rx_interrupt    (usart_type* usart_port,bool state)
+{
+    if(true==state)
+    {
+        usart_port->cr1 |= USART_RX_INTERRUPT_EN;
+    }
+    else
+    {
+        usart_port->cr1 &= (~USART_RX_INTERRUPT_EN);
+    }
+}
+
+extern void cmplx_dr_usart_config_parity_selection     (usart_type* usart_port,parity par_type)
+{
+    if(even==par_type)
+    {
+        usart_port->cr1 &= (~USART_PARITY_SELECTION);
+    }
+    else
+    {
+        usart_port->cr1 |= USART_PARITY_SELECTION;
+    }
+}
+
+void cmplx_dr_usart_config_enable            (usart_type* usart_port,bool state)
+{
+    {
+        if(true==state)
+        {
+            usart_port->cr1 |= USART_ENABLE;
+        }
+        else
+        {
+            usart_port->cr1 &= (~USART_ENABLE);
+        }
+    }
+}
+
+void cmplx_dr_usart_putchar                  (usart_type* usart_port,uint32_t data)
+{
+    while (USART_SR_TXE!=(usart_port->sr & USART_SR_TXE));
+    usart_port->dr = (data & USART_TXE_MASK);
+    while (USART_SR_TC!=(usart_port->sr & USART_SR_TC));
+}
+
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

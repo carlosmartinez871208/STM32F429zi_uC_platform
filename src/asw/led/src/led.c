@@ -43,7 +43,7 @@
 void led_init ()
 {
     dev_abs_set_gpio_clock (PORTG_CLOCK_EN,true);
-    IoHwAb_port_reset_pin (PORTG,RESET_PIN_13);
+    IoHwAb_port_pin_reset (PORTG,RESET_PIN_13);
     IoHwAb_port_pin_mode_output (PORTG,PG13_CONFIG_OUTPUT);
 }
 

@@ -4,7 +4,10 @@
     "files.associations": {
         "system.h": "c",
         "memory_abstraction.h": "c",
-        "led.h": "c"
+        "led.h": "c",
+        "usart.h": "c",
+        "timebase.h": "c",
+        "log.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true,
 }
