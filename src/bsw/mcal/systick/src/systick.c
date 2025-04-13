@@ -87,6 +87,10 @@ void systick_config_enable         (bool en_systick)
     }
 }
 
+void systick_reset_control_register (void)
+{
+    SYST_CSR = SYST_CSR_RESET;
+}
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

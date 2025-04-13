@@ -85,7 +85,7 @@ typedef enum{even=0,odd}parity;
 #define USART_OVERSAMPLING_16   (0x0ul) 
 #define USART_OVERSAMPLING_8    USART_OVERSAMPLING_RST
 
-//#define USART_BAUDRATE_115200   (52ul<<4 | 1ul<<0)
+//#define USART_BAUDRATE_115200   (52ul<<4 | 1ul<<0) /* Fck must be peripheral clock setup at startup configuration. */
 #define USART_BAUDRATE_115200   (13ul<<4)
 
 #define USART_TRANSMITER_ENABLE (0x1ul<<3)

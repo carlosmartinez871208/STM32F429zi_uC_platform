@@ -50,7 +50,7 @@ INC_PATH =\
 -I../src/bsw/hal/memory_abstraction/inc/\
 -I../src/bsw/hal/IoHwAb/inc/\
 -I../src/bsw/complex_drivers/usart/inc/\
--I../src/bsw/services/timebase/inc/\
+-I../src/bsw/services/rtos/inc/\
 -I../src/asw/led/inc/\
 -I../src/asw/button/inc/\
 -I../src/asw/log/inc/
@@ -119,6 +119,7 @@ config:
 	@echo ''
 	@echo "Building configuration files ...!"
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../src/main.c -o $(OBJ_PATH)/main.o
+	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/interrupts/interrupts.c -o $(OBJ_PATH)/interrupts.o
 	$(CC) $(CFLAGS) $(WARNS) $(INC_PATH) ../settings/startup_code_files/stm32f429zi_startup.c -o $(OBJ_PATH)/stm32f429zi_startup.o
 	$(SYSCALLS) 
 	@echo ''

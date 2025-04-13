@@ -63,9 +63,11 @@ typedef enum {int_clock=0,ext_clock}clock_source;
 /* SysTick down counter */
 #define DELAY_MS              (0x176FFul & 0xFFFFFFul) /* 95,999 pulses = 1 mS */
 /* OS tick timer. */
-#define OS_TICK_TIMER         (0x1193Ful & 0xFFFFFFul) /* 750us OS tick */
+#define OS_TICK_TIMER         (0x11940ul & 0xFFFFFFul) /* 750us OS tick */
 /* Clear Systick value register */
 #define SYST_CVR_CURRENT_CLR  (0x000000ul)
+/* Clear Systick Control value register */
+#define SYST_CSR_RESET        (0x0ul)
 /* Determine how many ticks are need */
 #define TICK_FREQUENCY        (1ul)
 /* Maximun delay allowed */
@@ -81,6 +83,7 @@ extern void systick_config_reset_value      (void);
 extern void systick_config_select_clk_src   (clock_source clk_src);
 extern void systick_config_enable_interrupt (bool en_int);
 extern void systick_config_enable           (bool en_systick);
+extern void systick_reset_control_register  (void);
 
 
 /*********************************************************************************************************************/

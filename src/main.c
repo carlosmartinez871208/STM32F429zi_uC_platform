@@ -32,7 +32,8 @@
 #include "system.h"
 #include "led.h"
 #include "log.h"
-#include "timebase.h"
+/* OS kernel: */
+#include "kernel.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -42,7 +43,29 @@
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
+void os_task0(void)
+{
+    while(true)
+    {
+        printf("Running task0\r\n");
+    }
+}
 
+void os_task1(void)
+{
+    while(true)
+    {
+        printf("Running task1\r\n");
+    }
+}
+
+void os_task2(void)
+{
+    while(true)
+    {
+        printf("Running task2\r\n");
+    }
+}
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
 /* main function called from reset handler. */
@@ -51,10 +74,13 @@ int main (void)
     led_init ();
     button_init ();
     log_init ();
-    timebase_init ();
+    /* Initializing rtos: */
+    rtos_kernel_add_thread (&os_task0,&os_task1,&os_task2);
+    /* Round Robin quanta, 15 ms = 0.000750us * 20: */
+    rtos_kernel_launch (20);
     while(true)
     {
-        
+
     }
     return EXIT_SUCCESS;
 }

@@ -142,3 +142,69 @@ To clean project just run
 
     make clean
 
+### RTOS notes:
+
+What is an Operating System?
+
+It is a resource manager, it allocates resources to every part of the system.
+
+What is a Real Time Operating System?
+
+It performs the functions of an operating system, but in this case is very important the term of dealine.
+
+RTOS Performance Metrics.
+
+Dealines: deriving the right results with in a set time constraint.
+
+Reliability: Running in a predictable way with a guaranteed response.
+
+Thread:
+Timed threads.
+
+> 1. sporadic.
+> 2. periodic.
+> 3. aperiodic.
+
+Event triggered threads.
+
+> 1. flag.
+> 2. input.
+> 3. output.
+
+Main threads.
+
+Non real-time: No guarantee of task execution.
+
+Real-time: bounded latency, guarantees execution.
+
+Soft real-time: executes on priority bases.
+
+Latency: execution delay.
+
+Periodic thread: runs at a fixed time interval.
+
+Aperiodic thread: run frequently, runtime cannot anticipated.
+
+Sporadic thread: runs infrequently or never.
+
+Blocked state: waiting state.
+
+Run state: execution state.
+
+Process: execution of program instance.
+
+Thread: execution of task, this is part of a process. Also a thread it is an execution of a task.
+
+Classification:
+
+static
+
+dynamic
+
+preemptive 
+
+non preemtive
+
+
+
+

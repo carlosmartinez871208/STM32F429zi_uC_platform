@@ -40,7 +40,7 @@ all:
 	@echo "Building BSW ...!"
 	@$(call makemcalmodules,all)
 	@$(call makehalmodules,all)
-	@$(call makemservmodules,all)
 	@$(call makecdrmodules,all)
+	@$(call makemservmodules,all)
 
 .PHONY: all

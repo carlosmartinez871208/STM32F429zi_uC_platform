@@ -1,18 +1,18 @@
 /*********************************************************************************************************************/
-/*                                                INCLUDES GROUP                                                     */
+/*                                                  SOURCE GROUP                                                     */
 /*********************************************************************************************************************/
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: timebase.h
+ * $File: main.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* timebase.h:
-                provides a programmable timebase for the system.
+/* main.c:
+           This files is use to initialice microcontroller features.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -21,12 +21,13 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-#ifndef TIMEBASE_H_
-#define TIMEBASE_H_
-/*                                                       Includes                                                    */
+
+/*                                                 Standard libraries                                                */
+/*********************************************************************************************************************/
+/*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "systick.h"
+#include "interrupts.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -34,19 +35,24 @@
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 
-/*                                                 Exported Variables                                                */
+/*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
 
-/*                                            Exported functions prototypes                                          */
+/*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-extern void     timebase_init   (void);
-extern void     tick_increment  (void);
-extern void     Systick_Handler (void);
-extern uint32_t get_tick        (void);
-extern void     delay_ms        (uint32_t delay);
+/* Configures NVIC priority */
+/* Modify priorities according your needs. */
+void NVIC_SetPriority (IRQn_type irqn,uint32_t priority)
+{
+    nvic_ipr* iprn = NVIC_IPR;
+    if(irqn == SysTick_IRQn)
+    {
+        iprn->ipr3 &= NVIC_IPR2_RESET;  /* From IPR3; XX00XXXX*/
+        iprn->ipr3 |= (priority << 16); /* i.e. XX0FXXXX*/
+    }
+    else{/* Do nothing. */}
+}
 
-/*********************************************************************************************************************/
-#endif
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

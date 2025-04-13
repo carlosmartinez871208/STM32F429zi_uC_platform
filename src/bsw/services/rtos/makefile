@@ -1,7 +1,7 @@
 MACH = cortex-m4
 
-SRC_DIR = src
-OBJ_DIR = ../../../../build/obj
+SRC_DIR := src
+OBJ_DIR  = ../../../../build/obj
 
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
@@ -17,8 +17,12 @@ CC = arm-none-eabi-gcc
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
 CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
 
-all:
-	@echo "Building module: time base."
-	$(CC) $(CFLAGS) $(WARNS) $(INCLUDES) $(SOURCES) -o $(OBJECTS)
+all: intro $(OBJECTS)
 
-.PHONY: all
+intro:
+	@echo "Building module: rtos."
+
+$(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(WARNS) $(INCLUDES) $< -o $@
+
+.PHONY: all intro

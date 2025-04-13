@@ -1,18 +1,18 @@
 /*********************************************************************************************************************/
-/*                                                  SOURCE GROUP                                                     */
+/*                                                INCLUDES GROUP                                                     */
 /*********************************************************************************************************************/
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: template.c
+ * $File: kernel.h
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* template.c:
-               Use this template for your source code files.
+/* kernel.h:
+                provides the system task and resources management.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -21,73 +21,48 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-
-/*                                                 Standard libraries                                                */
-/*********************************************************************************************************************/
-
-/*                                                   User libraries                                                  */
+#ifndef KERNEL_H_
+#define KERNEL_H_
+/*                                                       Includes                                                    */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "timebase.h"
 #include "interrupts.h"
+#include "systick.h"
+
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-volatile uint32_t current_tick;
-volatile uint32_t post_tick;
+/* Thread control block struct. */
+struct tcb
+{
+    uint32_t*   stack_ptr;
+    struct tcb* next_ptr;
+};
+
+typedef struct tcb tcb_type;
+
+/* Defines task function pointer: */
+typedef void(*task_f_ptr)(void);
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
+#define NUMBER_OF_THREADS (3ul)
+#define STACK_SIZE        (100ul) /* 1 Kb */
 
-/*                                             Local functions prototypes                                            */
+#define THUMB_MODE        (1ul<<24) /* PSR*/
+
+#define RTOS_KERNEL_PREES OS_TICK_TIMER
+
+/*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
 
-/*                                           Local functions implementation                                          */
+/*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-void timebase_init (void)
-{
-    __disable_irq ();
-    systick_config_clock_cycles (DELAY_MS);
-    systick_config_reset_value ();
-    systick_config_select_clk_src (int_clock);
-    systick_config_enable_interrupt (true);
-    systick_config_enable (true);
-    __enable_irq();
-}
-
-void tick_increment (void)
-{
-    current_tick += TICK_FREQUENCY;
-}
-
-/* Interrupt handler */
-void Systick_Handler (void)
-{
-    tick_increment();
-}
-
-uint32_t get_tick (void)
-{
-    __disable_irq();
-    post_tick = current_tick;
-    __enable_irq();
-    return post_tick;
-}
-
-void delay_ms (uint32_t delay)
-{
-    unsigned int tickstart = get_tick();
-    unsigned int wait = delay;
-    if(wait < MAX_DELAY)
-    {
-        wait += TICK_FREQUENCY;
-    }
-    else
-    {/* Do nothing */}
-    while ((get_tick() - tickstart) < wait){}
-}
-
+extern uint8_t rtos_kernel_add_thread (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2);
+extern void    rtos_kernel_launch     (uint32_t quanta);
+/*********************************************************************************************************************/
+#endif
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|
  *|         |               |             |                                                                           |
-**********************************************************************************************************************/
+**********************************************************************************************************************/ 
