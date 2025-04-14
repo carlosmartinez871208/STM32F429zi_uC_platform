@@ -59,7 +59,7 @@
  /* Floating Point Unit (FPU): */
  /* 0xE000ED88 CPACR Coprocessor access register. */
  #ifndef FPU_BASE_ADDRESS
- #define FPU_OFFSET           (0xEF30ul)
+ #define FPU_OFFSET           (0xED88ul)
  #define FPU_BASE_ADDRESS     (CORTEX_M4_BASE_ADDRESS + FPU_OFFSET)
 #endif
 

@@ -1,18 +1,18 @@
 /*********************************************************************************************************************/
-/*                                                  SOURCE GROUP                                                     */
+/*                                                INCLUDES GROUP                                                     */
 /*********************************************************************************************************************/
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: main.c
+ * $File: os_rr_kernel.h
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* main.c:
-           This files is use to initialice microcontroller features.
+/* os_rr_kernel.h:
+                provides the system task and resources management.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -21,79 +21,53 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-
-/*                                                 Standard libraries                                                */
-/*********************************************************************************************************************/
-#include <stdio.h>
-/*                                                   User libraries                                                  */
+#ifndef OS_KERNEL_H_
+#define OS_KERNEL_H_
+/*                                                       Includes                                                    */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "button.h"
-#include "system.h"
-#include "led.h"
-#include "log.h"
-/* OS kernel: */
-#include "os_kernel.h"
+#include "interrupts.h"
+#include "sbc.h"
+#include "systick.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-sint32_t semaphore0,semaphore1,semaphore2;
+/* Thread control block struct. */
+struct tcb
+{
+    uint32_t*   stack_ptr;
+    struct tcb* next_ptr;
+};
+
+typedef struct tcb tcb_type;
+
+/* Defines task function pointer: */
+typedef void(*task_f_ptr)(void);
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
+#define NUMBER_OF_THREADS   (3ul)
+#define STACK_SIZE          (100ul) /* 1 Kb */
 
-/*                                             Local functions prototypes                                            */
+#define THUMB_MODE          (1ul<<24) /* PSR*/
+
+#define RTOS_KERNEL_PREES   OS_TICK_TIMER
+
+#define PERIODIC_TASK_100MS (100ul)
+
+/*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
-void os_task0(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore0);
-        printf("Running task0\r\n");
-        rtos_semaphore_set(&semaphore1);
-    }
-}
 
-void os_task1(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore1);
-        printf("Running task1\r\n");
-        rtos_semaphore_set(&semaphore2);
-    }
-}
-
-void os_task2(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore2);
-        printf("Running task2\r\n");
-        rtos_semaphore_set(&semaphore0);
-    }
-}
-/*                                           Local functions implementation                                          */
+/*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-/* main function called from reset handler. */
-int main (void)
-{
-    led_init ();
-    button_init ();
-    log_init ();
-    /* Initialize semaphores */
-    rtos_semaphore_init(&semaphore0,2);
-    rtos_semaphore_init(&semaphore1,1);
-    rtos_semaphore_init(&semaphore2,0);
-    /* Initializing rtos: */
-    rtos_init (&os_task0,&os_task1,&os_task2);
-    while(true)
-    {
+extern void rtos_init              (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2);
+extern void rtos_thread_yield      (void); /*Use this function if you need a task to be coperative.*/
+extern void rtos_semaphore_init    (sint32_t* semaphore,sint32_t value); /* Use semaphore is you two or more task are using same resource. */
+extern void rtos_semaphore_set     (sint32_t* semaphore);
+extern void rtos_semaphore_wait    (sint32_t* semaphore);
 
-    }
-    return EXIT_SUCCESS;
-}
-
+/*********************************************************************************************************************/
+#endif
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

@@ -60,10 +60,8 @@ typedef enum {int_clock=0,ext_clock}clock_source;
 #define SYST_CSR_CLK_SOURCE   (1ul << 2)
 /* SysTick count flag, returns 1 if timer counted to 0 since last time this was read. */
 #define SYST_CSR_COUNTFLAG    (1ul << 16)
-/* SysTick down counter */
-#define DELAY_MS              (0x176FFul & 0xFFFFFFul) /* 95,999 pulses = 1 mS */
 /* OS tick timer. */
-#define OS_TICK_TIMER         (0x11940ul & 0xFFFFFFul) /* 750us OS tick */
+#define OS_TICK_TIMER         (0x176FFul & 0xFFFFFFul) /* 95,999 pulses = 1 mS */
 /* Clear Systick value register */
 #define SYST_CVR_CURRENT_CLR  (0x000000ul)
 /* Clear Systick Control value register */

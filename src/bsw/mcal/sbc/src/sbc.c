@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: main.c
+ * $File: sbc.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* main.c:
-           This files is use to initialice microcontroller features.
+/* sbc.c:
+          provides system implementation information ans system control.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -24,78 +24,42 @@
 
 /*                                                 Standard libraries                                                */
 /*********************************************************************************************************************/
-#include <stdio.h>
+
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "button.h"
-#include "system.h"
-#include "led.h"
-#include "log.h"
-/* OS kernel: */
-#include "os_kernel.h"
+#include "sbc.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-sint32_t semaphore0,semaphore1,semaphore2;
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
-void os_task0(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore0);
-        printf("Running task0\r\n");
-        rtos_semaphore_set(&semaphore1);
-    }
-}
 
-void os_task1(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore1);
-        printf("Running task1\r\n");
-        rtos_semaphore_set(&semaphore2);
-    }
-}
-
-void os_task2(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore2);
-        printf("Running task2\r\n");
-        rtos_semaphore_set(&semaphore0);
-    }
-}
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-/* main function called from reset handler. */
-int main (void)
+void sbc_vtor_config_offset (uint32_t mem_base,uint32_t tab_offset)
 {
-    led_init ();
-    button_init ();
-    log_init ();
-    /* Initialize semaphores */
-    rtos_semaphore_init(&semaphore0,2);
-    rtos_semaphore_init(&semaphore1,1);
-    rtos_semaphore_init(&semaphore2,0);
-    /* Initializing rtos: */
-    rtos_init (&os_task0,&os_task1,&os_task2);
-    while(true)
-    {
+    SBC_VTOR = (mem_base|tab_offset);
+}
 
+void sbc_icsr_config_systick_pending_bit (bool config_bit)
+{
+    if(true==config_bit)
+    {
+        SBC_ICSR |= SBC_ISCR_SET_PEN_BIT;
     }
-    return EXIT_SUCCESS;
+    else
+    {
+        SBC_ICSR &= (~SBC_ISCR_SET_PEN_BIT);
+    }
 }
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|
  *|         |               |             |                                                                           |
-**********************************************************************************************************************/ 
+**********************************************************************************************************************/

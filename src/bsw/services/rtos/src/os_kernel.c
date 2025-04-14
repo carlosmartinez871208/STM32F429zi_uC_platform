@@ -4,14 +4,14 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: kernel.c
+ * $File: os_rr_kernel.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* schduler.c:
+/* os_rr_kernel.c:
                provides thr logic for task switching.
  */
 /*********************************************************************************************************************/
@@ -28,7 +28,7 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "kernel.h"
+#include "os_kernel.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
@@ -37,13 +37,17 @@
 tcb_type  thread_cb[NUMBER_OF_THREADS];
 tcb_type* current_thread;
 
-/*Each thread will have stacksize of 100: 400 bytes.*/
+/* Each thread will have stacksize of 100: 400 bytes.*/
 uint32_t tcb_stack[NUMBER_OF_THREADS][STACK_SIZE];
+
+/* Clock tick for periodic task: */
+uint32_t period_tick;
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
-static void rtos_scheduler_launch (void);
-static void rtos_kernel_stack_init (uint32_t index);
+static void rtos_scheduler_launch   (void);
+static void rtos_kernel_stack_init  (uint32_t index);
+static void rtos_kernel_launch      (uint32_t quanta);
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
@@ -53,27 +57,9 @@ static void rtos_kernel_stack_init (uint32_t index)
     thread_cb[index].stack_ptr = &tcb_stack[index][STACK_SIZE-16ul];
     /* Set PSR (T-bit) to 1, to operate in thumb mode: */
     tcb_stack[index][STACK_SIZE-1ul] = THUMB_MODE;
-
-    /* For debugging purpose: */
-    /* Stack frame: */
-    //tcb_stack[index][STACK_SIZE-3ul]  = 0xAAAAAAAAul; /* R14 i.e Link Register (LR). */
-    //tcb_stack[index][STACK_SIZE-4ul]  = 0xAAAAAAAAul; /* R12 i.e */
-    //tcb_stack[index][STACK_SIZE-5ul]  = 0xAAAAAAAAul; /* R3 i.e */
-    //tcb_stack[index][STACK_SIZE-6ul]  = 0xAAAAAAAAul; /* R2 i.e */
-    //tcb_stack[index][STACK_SIZE-7ul]  = 0xAAAAAAAAul; /* R1 i.e */
-    //tcb_stack[index][STACK_SIZE-8ul]  = 0xAAAAAAAAul; /* R0 i.e */
-    /*  */
-    //tcb_stack[index][STACK_SIZE-9ul]  = 0xAAAAAAAAul; /* R11 i.e */
-    //tcb_stack[index][STACK_SIZE-10ul] = 0xAAAAAAAAul; /* R10 i.e */
-    //tcb_stack[index][STACK_SIZE-11ul] = 0xAAAAAAAAul; /* R9 i.e */
-    //tcb_stack[index][STACK_SIZE-12ul] = 0xAAAAAAAAul; /* R8 i.e */
-    //tcb_stack[index][STACK_SIZE-13ul] = 0xAAAAAAAAul; /* R7 i.e */
-    //tcb_stack[index][STACK_SIZE-14ul] = 0xAAAAAAAAul; /* R6 i.e */
-    //tcb_stack[index][STACK_SIZE-15ul] = 0xAAAAAAAAul; /* R5 i.e */
-    //tcb_stack[index][STACK_SIZE-16ul] = 0xAAAAAAAAul; /* R4 i.e */
 }
 
-uint8_t rtos_kernel_add_thread (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2)
+void rtos_init (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2)
 {
     /* Disable global interrups: */
     __disable_irq();
@@ -97,10 +83,11 @@ uint8_t rtos_kernel_add_thread (task_f_ptr task0,task_f_ptr task1,task_f_ptr tas
     current_thread = &thread_cb[0];
     /* Enable global interrupts: */
     __enable_irq();
-    return 0u;
+    /* Launch rtos kernel: */
+    rtos_kernel_launch (50);
 }
 
-void rtos_kernel_launch (uint32_t quanta)
+static void rtos_kernel_launch (uint32_t quanta)
 {
     uint32_t os_tick = 0ul;
     /* Reset systick: */
@@ -108,7 +95,7 @@ void rtos_kernel_launch (uint32_t quanta)
     /* Clear systick current value register: */
     systick_config_reset_value ();
     /* Load quanta*/
-    os_tick = (quanta * OS_TICK_TIMER)-1ul;
+    os_tick = (quanta * RTOS_KERNEL_PREES)-1ul;
     systick_config_clock_cycles (os_tick);
     /* Set systick to low priority: */
     NVIC_SetPriority (SysTick_IRQn,15ul);
@@ -141,7 +128,7 @@ __attribute__((naked)) void Systick_Handler (void)
     __asm("LDR R1,[R1,#4]");
     /* Store R1 at address equal R0, i.e. current_thread = r1*/
     __asm("STR R1,[R0]");
-    /* Load Cortex-<4 SP from address equals r1, i.e. SP = current_thread->stack_ptr: */
+    /* SP = current_thread->stack_ptr*/
     __asm("LDR SP,[R1]");
     /* Restore r4,r5,r6,r7,r8,r10,r11: */
     __asm("POP {R4-R11}");
@@ -175,6 +162,38 @@ static void rtos_scheduler_launch (void)
     __asm("CPSIE I");
     /* Return from exception */
     __asm("BX LR");
+}
+
+void rtos_thread_yield       (void)
+{
+    /* Clear SysTick current value register: */
+    systick_config_reset_value ();
+    /* Trigger SysTick: */
+    sbc_icsr_config_systick_pending_bit(true);
+}
+
+void rtos_semaphore_init (sint32_t* semaphore,sint32_t value)
+{
+    *semaphore = value;
+}
+
+void rtos_semaphore_set (sint32_t* semaphore)
+{
+    __disable_irq();
+    *semaphore +=1;
+    __enable_irq();
+}
+
+void rtos_semaphore_wait (sint32_t* semaphore)
+{
+    __disable_irq();
+    while(*semaphore <= 0)
+    {
+        __disable_irq();
+        __enable_irq();
+    }
+    *semaphore -=1;
+    __enable_irq();
 }
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

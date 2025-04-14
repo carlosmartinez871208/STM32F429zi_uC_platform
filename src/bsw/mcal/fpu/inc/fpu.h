@@ -1,18 +1,18 @@
 /*********************************************************************************************************************/
-/*                                                  SOURCE GROUP                                                     */
+/*                                                INCLUDES GROUP                                                     */
 /*********************************************************************************************************************/
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: main.c
+ * $File: fpu.h
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* main.c:
-           This files is use to initialice microcontroller features.
+/* fpu.h:
+          provides control for FPU.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -21,79 +21,54 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-
-/*                                                 Standard libraries                                                */
-/*********************************************************************************************************************/
-#include <stdio.h>
-/*                                                   User libraries                                                  */
+#ifndef FPU_H_
+#define FPU_H_
+/*                                                       Includes                                                    */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "button.h"
-#include "system.h"
-#include "led.h"
-#include "log.h"
-/* OS kernel: */
-#include "os_kernel.h"
+#include "peripherals.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-sint32_t semaphore0,semaphore1,semaphore2;
+/* FPU: coprocessor access control register. */
+#ifndef FPU_CPACR
+ #define FPU_CPACR_OFFSET         (0x0ul)
+ #define FPU_CPACR                (*(__IO uint32_t*)(FPU_BASE_ADDRESS + FPU_CPACR_OFFSET))
+#endif
 
+#ifndef FPU_FPCCR
+ #define FPU_FPCCR_OFFSET         (0x1ACul)
+ #define FPU_FPCCR                (*(__IO uint32_t*)(FPU_BASE_ADDRESS + FPU_FPCCR_OFFSET))
+#endif
+
+#ifndef FPU_FPCAR
+ #define FPU_FPCAR_OFFSET         (0x1B0ul)
+ #define FPU_FPCAR                (*(__IO uint32_t*)(FPU_BASE_ADDRESS + FPU_FPCAR_OFFSET))
+#endif
+
+#ifndef FPU_FPDSCR
+ #define FPU_FPDSCR_OFFSET         (0x1B4ul)
+ #define FPU_FPDSCR                (*(__IO uint32_t*)(FPU_BASE_ADDRESS + FPU_FPDSCR_OFFSET))
+#endif
+
+typedef enum{denied=0,privileged,reserved,full}access_control;
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
+#define FPU_CPACR_CP10_0             (0x1ul<<20)
+#define FPU_CPACR_CP10_1             (0x1ul<<21)
+#define FPU_CPACR_CP11_0             (0x1ul<<22)
+#define FPU_CPACR_CP11_1             (0x1ul<<23)
 
-/*                                             Local functions prototypes                                            */
+/*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
-void os_task0(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore0);
-        printf("Running task0\r\n");
-        rtos_semaphore_set(&semaphore1);
-    }
-}
+extern void fpu_config_coprocessor_privileges_access (access_control privileges);
 
-void os_task1(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore1);
-        printf("Running task1\r\n");
-        rtos_semaphore_set(&semaphore2);
-    }
-}
-
-void os_task2(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore2);
-        printf("Running task2\r\n");
-        rtos_semaphore_set(&semaphore0);
-    }
-}
-/*                                           Local functions implementation                                          */
+/*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-/* main function called from reset handler. */
-int main (void)
-{
-    led_init ();
-    button_init ();
-    log_init ();
-    /* Initialize semaphores */
-    rtos_semaphore_init(&semaphore0,2);
-    rtos_semaphore_init(&semaphore1,1);
-    rtos_semaphore_init(&semaphore2,0);
-    /* Initializing rtos: */
-    rtos_init (&os_task0,&os_task1,&os_task2);
-    while(true)
-    {
 
-    }
-    return EXIT_SUCCESS;
-}
 
+/*********************************************************************************************************************/
+#endif
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

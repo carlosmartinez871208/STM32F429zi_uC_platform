@@ -45,6 +45,7 @@ INC_PATH =\
 -I../src/bsw/mcal/port/inc/\
 -I../src/bsw/mcal/pwr/inc/\
 -I../src/bsw/mcal/rcc/inc/\
+-I../src/bsw/mcal/sbc/inc/\
 -I../src/bsw/mcal/systick/inc/\
 -I../src/bsw/hal/device_abstraction/inc/\
 -I../src/bsw/hal/memory_abstraction/inc/\
