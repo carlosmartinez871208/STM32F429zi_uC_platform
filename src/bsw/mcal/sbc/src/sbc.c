@@ -58,11 +58,21 @@ void sbc_icsr_config_systick_pending_bit (bool config_bit)
     }
 }
 
+void sbc_icsr_config_pendsv_pending_bit (void)
+{
+    SBC_ICSR = SBC_ISCR_SET_SET_PENSV_BIT;
+}
+
 void sbc_shpr_config_handler_priority (IRQn_type irqn,uint32_t priority)
 {
     if(SysTick_IRQn==irqn)
     {
         SBC_SPHR3 &= SBC_SHPR_SYSTICK_RST;
+        SBC_SPHR3 |= priority;
+    }
+    if(PendSV_IRQn==irqn)
+    {
+        SBC_SPHR3 &= SBC_SHPR_PENDSV_RST;
         SBC_SPHR3 |= priority;
     }
     else{/* Do nothing */}

@@ -63,8 +63,10 @@ void rtos_kernel_launch (uint32_t quanta)
     /* Load quanta*/
     os_tick = (quanta * RTOS_TICK_TIMER)-1ul;
     systick_config_clock_cycles (os_tick);
-    /* Set systick to low priority: */
+    /* Set systick priority: */
     sbc_shpr_config_handler_priority (SysTick_IRQn,SBC_SHPR_SYSTICK_PRI_14);
+    /* PendSV priority shall be a bit lower than SysTick: */
+    sbc_shpr_config_handler_priority (PendSV_IRQn,SBC_SHPR_PENDSV_PRI_15);
     /* Enable systick, select internal clock (PLL in our case 96 MHz): */
     systick_config_select_clk_src (int_clock);
     /* Enable systick interrupt: */
@@ -99,7 +101,7 @@ void rtos_init (uint32_t threads)
     {
         rtos_kernel_add_threads_2 (&os_task_0,&os_task_1);
     }
-    rtos_kernel_launch (OS_PERIOD_16_MS);
+    rtos_kernel_launch (OS_PERIOD_16_MS); /* Every task is executed every 16 mS aprox. 60 Hz. */
 }
 
 void rtos_kernel_add_threads_2 (task_f_ptr task0,task_f_ptr task1)
@@ -173,7 +175,7 @@ void rtos_kernel_add_threads_5 (task_f_ptr task0,task_f_ptr task1,task_f_ptr tas
 }
 
 /* Interrupt handler */
-__attribute__((naked)) void Systick_Handler (void)
+__attribute__((naked)) void PendSV_Handler (void)
 {
     /* Suspend current thread: */
     /* Disable global interrupt:*/
@@ -199,6 +201,11 @@ __attribute__((naked)) void Systick_Handler (void)
     __asm("CPSIE I");
     /* Return from exception and restore r0,r1,r3,r12,LR,PCR: */
     __asm("BX LR");
+}
+
+void Systick_Handler (void)
+{
+    sbc_icsr_config_pendsv_pending_bit();
 }
 
 static void rtos_scheduler_launch (void)
