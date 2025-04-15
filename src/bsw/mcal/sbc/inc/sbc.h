@@ -27,6 +27,7 @@
 /*********************************************************************************************************************/
 #include "Std_types.h"
 #include "peripherals.h"
+#include "interrupts.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -121,12 +122,14 @@ typedef struct
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 #define SBC_ISCR_SET_PEN_BIT      (0x1ul<<26)
+#define SBC_SHPR_SYSTICK_RST      (0x00FFFFFFul)
+#define SBC_SHPR_SYSTICK_PRI_14   (0xE0000000ul)
 
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
 extern void sbc_vtor_config_offset              (uint32_t mem_base,uint32_t tab_offset);
 extern void sbc_icsr_config_systick_pending_bit (bool config_bit);
-
+extern void sbc_shpr_config_handler_priority    (IRQn_type irqn,uint32_t priority);
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
 

@@ -334,8 +334,6 @@ __attribute__((__always_inline__)) static inline void __set_MSP (unsigned int Ma
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-/* Configures NVIC priority */
-extern void NVIC_SetPriority (IRQn_type irqn,uint32_t priority);
 
 /*********************************************************************************************************************/
 #endif

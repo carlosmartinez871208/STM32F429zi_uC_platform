@@ -32,40 +32,49 @@
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-/* Thread control block struct. */
-struct tcb
+
+
+/*                                                      Constants                                                    */
+/*********************************************************************************************************************/
+#define NUM_OF_THREADS      (5)
+#define STACK_SIZE          (100)
+
+#define THUMB_MODE          (1ul<<24) /* PSR*/
+
+#define RTOS_TICK_TIMER     OS_TICK_TIMER
+
+#define OS_PERIOD_50_MS     (50ul)
+#define OS_PERIOD_20_MS     (20ul)
+#define OS_PERIOD_30_MS     (30ul)
+#define OS_PERIOD_16_MS     (16ul)
+
+/*                                                 Exported Variables                                                */
+/*********************************************************************************************************************/
+struct thread_ctrl_block
 {
-    uint32_t*   stack_ptr;
-    struct tcb* next_ptr;
+    uint32_t*                 stack_pointer;
+    struct thread_ctrl_block* next_thread_pointer;
 };
 
-typedef struct tcb tcb_type;
+typedef struct thread_ctrl_block tcb_type;
 
 /* Defines task function pointer: */
 typedef void(*task_f_ptr)(void);
 
-/*                                                      Constants                                                    */
-/*********************************************************************************************************************/
-#define NUMBER_OF_THREADS   (3ul)
-#define STACK_SIZE          (100ul) /* 1 Kb */
-
-#define THUMB_MODE          (1ul<<24) /* PSR*/
-
-#define RTOS_KERNEL_PREES   OS_TICK_TIMER
-
-#define PERIODIC_TASK_100MS (100ul)
-
-/*                                                 Exported Variables                                                */
-/*********************************************************************************************************************/
-
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-extern void rtos_init              (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2);
-extern void rtos_thread_yield      (void); /*Use this function if you need a task to be coperative.*/
-extern void rtos_semaphore_init    (sint32_t* semaphore,sint32_t value); /* Use semaphore is you two or more task are using same resource. */
+extern void rtos_init              (uint32_t task_index);
+extern void rtos_thread_yield      (void);
+extern void rtos_semaphore_init    (sint32_t* semaphore,sint32_t value);
 extern void rtos_semaphore_set     (sint32_t* semaphore);
 extern void rtos_semaphore_wait    (sint32_t* semaphore);
 
+/* Task prototypes: */
+extern void os_task_0 (void);
+extern void os_task_1 (void);
+extern void os_task_2 (void);
+extern void os_task_3 (void);
+extern void os_task_4 (void);
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

@@ -37,42 +37,13 @@
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-sint32_t semaphore0,semaphore1,semaphore2;
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
-void os_task0(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore0);
-        printf("Running task0\r\n");
-        rtos_semaphore_set(&semaphore1);
-    }
-}
 
-void os_task1(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore1);
-        printf("Running task1\r\n");
-        rtos_semaphore_set(&semaphore2);
-    }
-}
-
-void os_task2(void)
-{
-    while(true)
-    {
-        rtos_semaphore_wait(&semaphore2);
-        printf("Running task2\r\n");
-        rtos_semaphore_set(&semaphore0);
-    }
-}
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
 /* main function called from reset handler. */
@@ -81,12 +52,7 @@ int main (void)
     led_init ();
     button_init ();
     log_init ();
-    /* Initialize semaphores */
-    rtos_semaphore_init(&semaphore0,2);
-    rtos_semaphore_init(&semaphore1,1);
-    rtos_semaphore_init(&semaphore2,0);
-    /* Initializing rtos: */
-    rtos_init (&os_task0,&os_task1,&os_task2);
+    rtos_init(5);
     while(true)
     {
 

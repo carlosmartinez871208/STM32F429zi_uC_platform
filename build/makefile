@@ -54,7 +54,8 @@ INC_PATH =\
 -I../src/bsw/services/rtos/inc/\
 -I../src/asw/led/inc/\
 -I../src/asw/button/inc/\
--I../src/asw/log/inc/
+-I../src/asw/log/inc/\
+-I../src/asw/os_threads
 
 # Source directory:
 SRC_PATH = ../src

@@ -40,18 +40,7 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-/* Configures NVIC priority */
-/* Modify priorities according your needs. */
-void NVIC_SetPriority (IRQn_type irqn,uint32_t priority)
-{
-    nvic_ipr* iprn = NVIC_IPR;
-    if(irqn == SysTick_IRQn)
-    {
-        iprn->ipr3 &= NVIC_IPR2_RESET;  /* From IPR3; XX00XXXX*/
-        iprn->ipr3 |= (priority << 16); /* i.e. XX0FXXXX*/
-    }
-    else{/* Do nothing. */}
-}
+
 
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |

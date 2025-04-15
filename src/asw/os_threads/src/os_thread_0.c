@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: sbc.c
+ * $File: os_kernel.c
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* sbc.c:
-          provides system implementation information ans system control.
+/* os_kernel.c:
+               provides thr logic for task switching.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -24,49 +24,31 @@
 
 /*                                                 Standard libraries                                                */
 /*********************************************************************************************************************/
-
+#include <stdio.h>
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "sbc.h"
-
+#include "os_kernel.h"
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
 
+
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void sbc_vtor_config_offset (uint32_t mem_base,uint32_t tab_offset)
+void os_task_0()
 {
-    SBC_VTOR = (mem_base|tab_offset);
-}
-
-void sbc_icsr_config_systick_pending_bit (bool config_bit)
-{
-    if(true==config_bit)
+    while(true)
     {
-        SBC_ICSR |= SBC_ISCR_SET_PEN_BIT;
-    }
-    else
-    {
-        SBC_ICSR &= (~SBC_ISCR_SET_PEN_BIT);
+        printf("Executing task 0\r\n");
     }
 }
 
-void sbc_shpr_config_handler_priority (IRQn_type irqn,uint32_t priority)
-{
-    if(SysTick_IRQn==irqn)
-    {
-        SBC_SPHR3 &= SBC_SHPR_SYSTICK_RST;
-        SBC_SPHR3 |= priority;
-    }
-    else{/* Do nothing */}
-}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|
