@@ -4,15 +4,15 @@
 /*                                               OBJECT SPECIFICATION                                                */
 /*********************************************************************************************************************/
 /*!
- * $File: systick.h
+ * $File: os_kernel.h
  * $Revision: Version 1.0 $
  * $Author: Carlos Martinez $
  * $Date: 2025-03-23 $
  */
 /*********************************************************************************************************************/
 /* DESCRIPTION :                                                                                                     */
-/* systick.h:
-              configures systick timer.
+/* os_kernel.h:
+                provides the system task and resources management.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -21,70 +21,79 @@
 /* not permitted without express written authority. Offenders will be liable                                         */
 /* for damages.                                                                                                      */
 /*********************************************************************************************************************/
-#ifndef SYSTICK_H_
-#define SYSTICK_H_
+#ifndef OS_KERNEL_H_
+#define OS_KERNEL_H_
 /*                                                       Includes                                                    */
 /*********************************************************************************************************************/
 #include "Std_types.h"
-#include "peripherals.h"
+#include "interrupts.h"
+#include "sbc.h"
+#include "systick.h"
+
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
-/* Systick control and status register. */
-#ifndef SYST_CSR_OFFSET
-#define SYST_CSR_OFFSET (0x0ul)
- #define SYST_CSR (*(__IO uint32_t*)(SYSTICK_BASE_ADDRESS + SYST_CSR_OFFSET))
-#endif
 
-/* Systick reload value register */
-#ifndef SYST_RVR_OFFSET
- #define SYST_RVR_OFFSET (0x4ul)
- #define SYST_RVR (*(__IO uint32_t*)(SYSTICK_BASE_ADDRESS + SYST_RVR_OFFSET))
-#endif
-
-/* Systick current value register */
-#ifndef SYST_CVR_OFFSET
- #define SYST_CVR_OFFSET (0x8ul)
- #define SYST_CVR (*(__IO uint32_t*)(SYSTICK_BASE_ADDRESS + SYST_CVR_OFFSET))
-#endif
-
-typedef enum {int_clock=0,ext_clock}clock_source;
 
 /*                                                      Constants                                                    */
 /*********************************************************************************************************************/
+#define NUM_OF_THREADS      (5)
+#define STACK_SIZE          (100)
 
-/* Enable Systick counter */
-#define SYST_CSR_ENABLE       (1ul << 0)
-/* Enable Systick exception request */
-#define SYST_CSR_TICKINT      (1ul << 1)
-/* Indicates Systick source clock */
-#define SYST_CSR_CLK_SOURCE   (1ul << 2)
-/* SysTick count flag, returns 1 if timer counted to 0 since last time this was read. */
-#define SYST_CSR_COUNTFLAG    (1ul << 16)
-/* OS tick timer. */
-#define OS_TICK_TIMER_1MS     (0x176FFul & 0xFFFFFFul) /* 95,999 pulses = 1 mS */
-#define OS_TICK_TIMER_625US   (0xEA5Ful & 0xFFFFFFul)  /* 59,999 pulses = 625 uS*/ 
-/* Clear Systick value register */
-#define SYST_CVR_CURRENT_CLR  (0x000000ul)
-/* Clear Systick Control value register */
-#define SYST_CSR_RESET        (0x0ul)
-/* Determine how many ticks are need */
-#define TICK_FREQUENCY        (1ul)
-/* Maximun delay allowed */
-#define MAX_DELAY             (0xFFFFFFFFul)
+/*
+Thumb mode in ARM processors is a feature that uses a 16-bit instruction set (Thumb) instead of the standard 
+32-bit ARM instruction set. This allows for smaller and more densely packed code, which is advantageous for 
+memory-constrained systems. Thumb mode effectively compresses the code, reducing the amount of memory required 
+to store instructions
+
+The EPSR contains the T bit, that is set to 1 to indicate that the processor executes Thumb instructions, and an
+overlaid ICI or IT field that supports interrupt-continue load/store instructions and the IT instruction.
+*/
+#define THUMB_MODE          (1ul<<24) /* PSR*/
+
+#define RTOS_TICK_TIMER     OS_TICK_TIMER_1MS
+
+#define OS_PERIOD_50_MS     (50ul)
+#define OS_PERIOD_20_MS     (20ul)
+#define OS_PERIOD_30_MS     (30ul)
+#define OS_PERIOD_16_MS     (16ul)
+#define OS_PERIOD_10_MS     (10ul)
+#define OS_PERIOD_5_MS      (5ul)
+
+#define FIFO_SIZE           (15ul)
 
 /*                                                 Exported Variables                                                */
 /*********************************************************************************************************************/
+struct thread_ctrl_block
+{
+    uint32_t*                 stack_pointer;       /* Stack pointer:  */
+    struct thread_ctrl_block* next_thread_pointer; /* Points to next stack pointer */
+};
+
+typedef struct thread_ctrl_block tcb_type;
+
+/* Defines task function pointer: */
+typedef void(*task_f_ptr)(void);
 
 /*                                            Exported functions prototypes                                          */
 /*********************************************************************************************************************/
-extern void systick_config_clock_cycles     (uint32_t clk_cycles);
-extern void systick_config_reset_value      (void);
-extern void systick_config_select_clk_src   (clock_source clk_src);
-extern void systick_config_enable_interrupt (bool en_int);
-extern void systick_config_enable           (bool en_systick);
-extern void systick_reset_control_register  (void);
+extern void     rtos_init              (uint32_t task_index);
+extern void     rtos_thread_yield      (void);
+extern void     rtos_semaphore_init    (sint32_t* semaphore,sint32_t value);
+extern void     rtos_semaphore_set     (sint32_t* semaphore);
+extern void     rtos_semaphore_wait    (sint32_t* semaphore);
+extern void     rtos_fifo_init         (void);
+extern void     rtos_fifo_put          (uint32_t);
+extern uint32_t rtos_fifo_get          (void);
 
+/* Call this function from main if not using RTOS. */
+extern void os_task_main (void);
 
+/* Task prototypes: */
+extern void os_task_0 (void);
+extern void os_task_1 (void);
+extern void os_task_2 (void);
+extern void os_task_3 (void);
+extern void os_task_4 (void);
 /*********************************************************************************************************************/
 #endif
 /***************************************************Project Logs*******************************************************

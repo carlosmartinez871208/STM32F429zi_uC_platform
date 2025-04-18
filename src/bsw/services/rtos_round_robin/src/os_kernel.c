@@ -13,7 +13,7 @@
 /* DESCRIPTION :                                                                                                     */
 /* os_kernel.c:
                provides thr logic for task switching.
-               All Round Robin tasks has the same execution time.
+               This rtos has a periodic scheduler.
  */
 /*********************************************************************************************************************/
 /* ALL RIGHTS RESERVED                                                                                               */
@@ -41,11 +41,17 @@ tcb_type* current_thread_ptr;
 
 uint32_t tcb_stack[NUM_OF_THREADS][STACK_SIZE];
 
+uint32_t put_index;
+uint32_t get_index;
+uint32_t os_fifo[FIFO_SIZE];
+sint32_t current_fifo_size;
+uint32_t lost_data;
+
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
-static void rtos_kernel_stack_init (uint32_t task_index);
-static void rtos_scheduler_launch  (void);
-static void rtos_kernel_launch     (uint32_t quanta);
+static void rtos_kernel_stack_init    (uint32_t task_index);
+static void rtos_scheduler_launch     (void);
+static void rtos_kernel_launch        (uint32_t quanta);
 static void rtos_kernel_add_threads_2 (task_f_ptr task0,task_f_ptr task1);
 static void rtos_kernel_add_threads_3 (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2);
 static void rtos_kernel_add_threads_4 (task_f_ptr task0,task_f_ptr task1,task_f_ptr task2,task_f_ptr task3);
@@ -77,10 +83,10 @@ void rtos_kernel_launch (uint32_t quanta)
     rtos_scheduler_launch();
 }
 
-static void rtos_kernel_stack_init (uint32_t task_index)
+static void rtos_kernel_stack_init (uint32_t task_index) /* Allocates space in the stack  */
 {
-    kernel_os_threads[task_index].stack_pointer = &tcb_stack[task_index][STACK_SIZE-16];
-    tcb_stack[task_index][STACK_SIZE-1] = THUMB_MODE;
+    kernel_os_threads[task_index].stack_pointer = &tcb_stack[task_index][STACK_SIZE-16]; /* kernel[0].stack = &tcb_stack[0][336]. */
+    tcb_stack[task_index][STACK_SIZE-1] = THUMB_MODE;                                    /* tcb[0][396] = (1ul<<24), enable EPSR T bit.*/
 }
 
 void rtos_init (uint32_t threads)
@@ -101,19 +107,21 @@ void rtos_init (uint32_t threads)
     {
         rtos_kernel_add_threads_2 (&os_task_0,&os_task_1);
     }
-    rtos_kernel_launch (OS_PERIOD_16_MS); /* Every task is executed every 16 mS aprox. 60 Hz. */
+    rtos_kernel_launch (OS_PERIOD_5_MS); /* Every task is executed every 10 mS aprox. full RTOS cycle is 50 mS, 20 Hz. */
 }
 
 void rtos_kernel_add_threads_2 (task_f_ptr task0,task_f_ptr task1)
 {
     __disable_irq();
-    kernel_os_threads[0].next_thread_pointer = &kernel_os_threads[1];
-    kernel_os_threads[1].next_thread_pointer = &kernel_os_threads[0];
-    rtos_kernel_stack_init(0);
-    tcb_stack[0][STACK_SIZE-2] = (uint32_t)(task0);
-    rtos_kernel_stack_init(1);
-    tcb_stack[1][STACK_SIZE-2] = (uint32_t)(task1);
-    current_thread_ptr = &kernel_os_threads[0];
+    kernel_os_threads[0].next_thread_pointer = &kernel_os_threads[1]; /* next element is asigned. Second thread. */
+    kernel_os_threads[1].next_thread_pointer = &kernel_os_threads[0]; /* next element is asigned. First thread.*/
+    rtos_kernel_stack_init(0);                                        /* kernel_os_threads[0].stack_pointer = &tcb_stack[0][336].  */
+                                                                      /* tcb_stack[0][396] = 0x100 0000 (processor will execute thumb mode). */
+    tcb_stack[0][STACK_SIZE-2] = (uint32_t)(task0);                   /* tcb_stack[0][392] = &task0. */
+    rtos_kernel_stack_init(1);                                        /* kernel_os_threads[1].stack_pointer = &tcb_stack[1][736].  */
+                                                                      /* tcb_stack[1][796] = 0x100 0000 (processor will execute thumb mode).*/
+    tcb_stack[1][STACK_SIZE-2] = (uint32_t)(task1);                   /* tcb_stack[1][792] = &task1. */
+    current_thread_ptr = &kernel_os_threads[0];                       /* current_thread_ptr is initilialized with thread 0. */
     __enable_irq();
 }
 
@@ -123,7 +131,7 @@ void rtos_kernel_add_threads_3 (task_f_ptr task0,task_f_ptr task1,task_f_ptr tas
     kernel_os_threads[0].next_thread_pointer = &kernel_os_threads[1];
     kernel_os_threads[1].next_thread_pointer = &kernel_os_threads[2];
     kernel_os_threads[2].next_thread_pointer = &kernel_os_threads[0];
-    rtos_kernel_stack_init(0);
+    rtos_kernel_stack_init(0); 
     tcb_stack[0][STACK_SIZE-2] = (uint32_t)(task0);
     rtos_kernel_stack_init(1);
     tcb_stack[1][STACK_SIZE-2] = (uint32_t)(task1);
@@ -177,30 +185,32 @@ void rtos_kernel_add_threads_5 (task_f_ptr task0,task_f_ptr task1,task_f_ptr tas
 /* Interrupt handler */
 __attribute__((naked)) void PendSV_Handler (void)
 {
-    /* Suspend current thread: */
-    /* Disable global interrupt:*/
-    __asm("CPSID I");
-    /* Save r4,r5,r6,r7,r8,r10,r11: */
-    __asm("PUSH {R4-R11}");
-    /* Load address of current pointer into r0 */
-    __asm("LDR R0,=current_thread_ptr");
-    /* Load r1 from address equals r0: i.e. r1=current_thread: */
-    __asm("LDR R1,[R0]");
-    /* Store Cortex-M4 SP at address equals r1, i.e. SP into tcb: */
-    __asm("STR SP,[R1]");
-    /* Choose next thread:*/
-    /* Load r1 from a location 4 bytes above address r1, i.e. r1 = current_thread->next_ptr: */
-    __asm("LDR R1,[R1,#4]");
-    /* Store R1 at address equal R0, i.e. current_thread = r1*/
-    __asm("STR R1,[R0]");
-    /* SP = current_thread->stack_ptr*/
-    __asm("LDR SP,[R1]");
-    /* Restore r4,r5,r6,r7,r8,r10,r11: */
-    __asm("POP {R4-R11}");
-    /* Enable global interrupt:*/
-    __asm("CPSIE I");
-    /* Return from exception and restore r0,r1,r3,r12,LR,PCR: */
-    __asm("BX LR");
+    __asm("CPSID I");                            /* Suspend current thread: current_thread_ptr = &kernel_os_threads[0]. */
+                                                 /* Disable global interrupt:*/
+
+    __asm("PUSH {R4-R11}");                      /* Save r4,r5,r6,r7,r8,r10,r11: this is the current context. */
+
+    __asm("LDR R0,=current_thread_ptr");         /* R0 = current_thread_ptr = &kernel_os_threads[0]. */
+
+    __asm("LDR R1,[R0]");                        /* R1 = R0 = current_thread_ptr = &kernel_os_threads[0]. */
+
+    __asm("STR SP,[R1]");                        /* R1 = SP = R0 = current_thread_ptr = &kernel_os_threads[0]. */
+
+    __asm("PUSH {R0,LR}");                       /* Saves context. */
+
+    __asm("BL rtos_scheduler_round_robin");      /* Calls a function that performs round robin scheduling. */
+
+    __asm("POP {R0,LR}");                        /* Restores context. */
+
+    __asm("LDR R1,[R0]");                        /* R1 = R0 = current_thread_ptr = &kernel_os_threads[1]. */
+
+    __asm("LDR SP,[R1]");                        /* SP = R1 = &kernel_os_threads[1]. */
+
+    __asm("POP {R4-R11}");                       /* Restores r4,r5,r6,r7,r8,r10,r11: */
+
+    __asm("CPSIE I");                            /* Enables interrutps */
+
+    __asm("BX LR");                              /* Return from exception. */
 }
 
 void Systick_Handler (void)
@@ -208,30 +218,48 @@ void Systick_Handler (void)
     sbc_icsr_config_pendsv_pending_bit();
 }
 
+void rtos_scheduler_round_robin (void)
+{
+    current_thread_ptr = current_thread_ptr->next_thread_pointer;
+}
+
+/* To make switch context:
+1.- Enable processor faults ans interrupts.
+2.- Prioritize the interrupts properly.
+3.- Create a structure to store the list of tasks. This is called Task  Control Block. Initialize each tasl and store PSP into this table.
+4.- Initializae Systick timer.
+5.- On each systick interrupt, we would increment tick value and trigger PendSV interrupt.
+6.- context switch at PendSV interrup:
+    Save context of existing task by saving R4-R11.
+    Save PSP to the Task Control Block
+    Update the PSP with stack pointer of new task from Task Control Block.
+    Recover context of new task by updating R4-R11 from the task's stack.
+*/
+
 static void rtos_scheduler_launch (void)
 {
-    /* Load address of current_thread into R0: */
-    __asm("LDR R0,=current_thread_ptr");
-    /* Load R2 from address equals r0, r2=current_thread: */
-    __asm("LDR R2,[R0]");
-    /* Load Cortex-M4 SP from address equals R2, i.e. SP = current_thread->stack_ptr: */
-    __asm("LDR SP,[R2]");
-    /* Restore r4,r5,r6,r7,r8,r10,r11: */
-    __asm("POP {R4-R11}");
-    /* Restore r0,r1,r2,r3: */
-    __asm("POP {R0-R3}");
-    /* Restore Link Register (R12): */
-    __asm("POP {R12}");
-    /* Skip LR: */
-    __asm("ADD SP,SP,#4");
-    /* Create a new start location by popping LR: */
-    __asm("POP {LR}");
-    /* Skip PSR by adding 4 to SP: */
-    __asm("ADD SP,SP,#4");
-    /* Enable Global interrupts: */
-    __asm("CPSIE I");
-    /* Return from exception */
-    __asm("BX LR");
+    __asm("LDR R0,=current_thread_ptr"); /* First cycle: */
+                                         /* R0 = &kernel_os_threads[0]. */
+
+    __asm("LDR R2,[R0]");                /* R2 = R0 = current_thread_ptr = &kernel_os_threads[0]. */
+
+    __asm("LDR SP,[R2]");                /* SP = R2 = current_thread_ptr = R0 = &kernel_os_threads[0]. */
+
+    __asm("POP {R4-R11}");               /* Restores r4,r5,r6,r7,r8,r10,r11: */
+
+    __asm("POP {R0-R3}");                /* Restores r0,r1,r2,r3: */ 
+
+    __asm("POP {R12}");                  /* Restore Link Register (R12): */
+
+    __asm("ADD SP,SP,#4");               /* Skips LR: */
+
+    __asm("POP {LR}");                   /* Create a new start location by popping LR: */
+
+    __asm("ADD SP,SP,#4");               /* Skip PSR by adding 4 to SP: */
+
+    __asm("CPSIE I");                    /* Enable Global interrupts: */
+
+    __asm("BX LR");                      /* Return from exception. */
 }
 
 /* Once the thread process has finished this function allows other task access to the RTOS clock. */
@@ -240,7 +268,7 @@ void rtos_thread_yield       (void)
     /* Clear SysTick current value register: */
     systick_config_reset_value ();
     /* Trigger SysTick: */
-    sbc_icsr_config_systick_pending_bit(true);
+    sbc_icsr_config_systick_pending_bit (true);
 }
 
 void rtos_semaphore_init (sint32_t* semaphore,sint32_t value)
@@ -267,6 +295,38 @@ void rtos_semaphore_wait (sint32_t* semaphore)
     __enable_irq();
 }
 
+void rtos_fifo_init(void)
+{
+    put_index = 0ul;
+    get_index = 0ul;
+    rtos_semaphore_init (&current_fifo_size,0ul);
+    lost_data = 0ul;
+}
+
+void rtos_fifo_put (uint32_t data)
+{
+    if(FIFO_SIZE == current_fifo_size)
+    {
+        lost_data++;
+    }
+    else
+    {
+        os_fifo[put_index] = data;
+        put_index = (put_index+1ul)%FIFO_SIZE;
+        rtos_semaphore_set(&current_fifo_size);
+    }
+}
+
+uint32_t rtos_fifo_get (void)
+{
+    uint32_t data;
+    rtos_semaphore_wait(&current_fifo_size);
+    __disable_irq();
+    data = os_fifo[get_index];
+    get_index = (get_index+1ul)%FIFO_SIZE;
+    __enable_irq();
+    return data;
+}
 /***************************************************Project Logs*******************************************************
  *|    ID   |     Ticket    |     Date    |                               Description                                 |
  *|---------|---------------|-------------|---------------------------------------------------------------------------|

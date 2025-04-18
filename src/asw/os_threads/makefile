@@ -23,12 +23,13 @@ INCLUDES =\
 -I../../bsw/hal/memory_abstraction/inc/\
 -I../../bsw/hal/IoHwAb/inc/\
 -I../../bsw/complex_drivers/usart/inc/\
--I../../bsw/services/rtos/inc/
+-I../../bsw/services/rtos_round_robin/inc/\
+-I../../bsw/services/rtos_periodic/inc/
 
 # Flags:
 CC = arm-none-eabi-gcc
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
-CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
+CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11 -g
 
 all: intro $(OBJECTS)
 

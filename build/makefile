@@ -51,7 +51,8 @@ INC_PATH =\
 -I../src/bsw/hal/memory_abstraction/inc/\
 -I../src/bsw/hal/IoHwAb/inc/\
 -I../src/bsw/complex_drivers/usart/inc/\
--I../src/bsw/services/rtos/inc/\
+-I../src/bsw/services/rtos_periodic/inc/\
+-I../src/bsw/services/rtos_round_robin/inc/\
 -I../src/asw/led/inc/\
 -I../src/asw/button/inc/\
 -I../src/asw/log/inc/\
@@ -70,11 +71,13 @@ LOG_CMD  = 2>&1 | tee -a $(LOG_FILE)
 CC = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
 OD = arm-none-eabi-objdump
+DB = JLinkGDBServerCL
+GDB = arm-none-eabi-gdb
 SIZE = arm-none-eabi-size
 
 #Flags
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
-CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
+CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11 -g
 
 # Check if user has selected standard library integration.
 STDLIB =
@@ -94,7 +97,7 @@ define makeaswmodules
         done
 endef
 
-.PHONY: all asw bsw clean config flash init link post_build stats
+.PHONY: all asw bsw clean client debug config flash init link post_build server stats
 
 all:
 	@mkdir -p $(BIN_PATH)
@@ -163,3 +166,11 @@ $(BIN_PATH)/jflash: $(TARGET).bin
 flash: $(BIN_PATH)/jflash
 	@echo "Flashing started ...!"
 	JLinkExe -commanderscript $<
+
+debug: server client
+
+client:
+	$(GDB) -q $(TARGET)
+
+server:
+	$(DB) -select USB -device $(DEVICE) -endian-little -if SWD -speed 4000

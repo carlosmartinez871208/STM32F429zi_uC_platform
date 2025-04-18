@@ -15,7 +15,7 @@ INCLUDES =\
 # Flags:
 CC = arm-none-eabi-gcc
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
-CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
+CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11 -g
 
 all:
 	@echo "Building module: port."

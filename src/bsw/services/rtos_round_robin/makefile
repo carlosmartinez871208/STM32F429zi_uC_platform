@@ -16,12 +16,15 @@ INCLUDES =\
 # Flags:
 CC = arm-none-eabi-gcc
 WARNS = -Wall -Werror -Wpedantic -Wno-unused-variable -Wno-unused-function -Werror-implicit-function-declaration
-CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11
+CFLAGS = -c -mcpu=$(MACH) -mthumb -std=gnu11 -g
 
+# Uncomment this line to add to the project build.
 all: intro $(OBJECTS)
+# Comment this line to add to the project build.
+#all: intro
 
 intro:
-	@echo "Building module: rtos kernel."
+	@echo "Building module: rtos kernel, round robin scheduler."
 
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(WARNS) $(INCLUDES) $< -o $@
