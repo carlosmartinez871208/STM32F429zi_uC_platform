@@ -23,8 +23,7 @@ INCLUDES =\
 -I../../bsw/hal/memory_abstraction/inc/\
 -I../../bsw/hal/IoHwAb/inc/\
 -I../../bsw/complex_drivers/usart/inc/\
--I../../bsw/services/rtos_round_robin/inc/\
--I../../bsw/services/rtos_periodic/inc/
+-I../../bsw/services/rtos/inc/
 
 # Flags:
 CC = arm-none-eabi-gcc

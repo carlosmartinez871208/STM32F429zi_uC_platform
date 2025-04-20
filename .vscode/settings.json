@@ -8,7 +8,8 @@
         "usart.h": "c",
         "timebase.h": "c",
         "log.h": "c",
-        "Std_types.h": "c"
+        "Std_types.h": "c",
+        "os_periodic.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true,
 }

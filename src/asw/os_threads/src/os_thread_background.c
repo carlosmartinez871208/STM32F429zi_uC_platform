@@ -41,11 +41,11 @@
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
-void os_task_2()
+void os_task_background()
 {
     while(true)
     {
-        printf("Executing task 2\r\n");
+        printf("Background\r\n");
     }
 }
 

@@ -51,8 +51,7 @@ INC_PATH =\
 -I../src/bsw/hal/memory_abstraction/inc/\
 -I../src/bsw/hal/IoHwAb/inc/\
 -I../src/bsw/complex_drivers/usart/inc/\
--I../src/bsw/services/rtos_periodic/inc/\
--I../src/bsw/services/rtos_round_robin/inc/\
+-I../src/bsw/services/rtos/inc/\
 -I../src/asw/led/inc/\
 -I../src/asw/button/inc/\
 -I../src/asw/log/inc/\
@@ -167,10 +166,11 @@ flash: $(BIN_PATH)/jflash
 	@echo "Flashing started ...!"
 	JLinkExe -commanderscript $<
 
+# Use this if you are using JLink: make -j2 debug
 debug: server client
 
 client:
-	$(GDB) -q $(TARGET)
+	$(GDB) -ex 'target remote: 2331' $(TARGET) 
 
 server:
 	$(DB) -select USB -device $(DEVICE) -endian-little -if SWD -speed 4000

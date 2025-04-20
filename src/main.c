@@ -28,12 +28,13 @@
 /*                                                   User libraries                                                  */
 /*********************************************************************************************************************/
 #include "Std_types.h"
+#include "bsw/services/rtos/inc/rtos_kernel.h"
 #include "button.h"
 #include "system.h"
 #include "led.h"
 #include "log.h"
 /* OS kernel: */
-#include "os_kernel.h"
+#include "rtos_kernel.h"
 
 /*                                                        Types                                                      */
 /*********************************************************************************************************************/
@@ -43,6 +44,7 @@
 
 /*                                             Local functions prototypes                                            */
 /*********************************************************************************************************************/
+task_offset executing_time[FIVE_TASKS] = {5,10,20,40,80};
 
 /*                                           Local functions implementation                                          */
 /*********************************************************************************************************************/
@@ -52,7 +54,7 @@ int main (void)
     led_init ();
     button_init ();
     log_init ();
-    rtos_init(5);
+    rtos_init(FIVE_TASKS,periodic,executing_time);
     while(true)
     {
 

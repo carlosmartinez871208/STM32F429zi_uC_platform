@@ -205,6 +205,22 @@ preemptive
 
 non preemtive
 
+## Main Control Block
+
+    typedef void (*task_function_pointer) (void); 
+
+    typedef struct
+    {
+        uint32_t              rtos_tcb_psp;
+        uint32_t              rtos_tcb_current_state;
+        task_function_pointer;
+    }rtos_tcb_type;
+
+    #define TASK_INVALID_STATE 0ul
+    #define TASK_READY_STATE   1ul
+
+    #define MAX_TASKS_NUMBER   10ul
+    #define TASK_STACK_SIZE    4096ul
 
 
 

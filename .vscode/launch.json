@@ -14,6 +14,18 @@
             "device": "STM32F429ZI",
             "interface": "swd",
             "runToEntryPoint": "main",
+        },
+        {
+            "request": "launch",
+            "type": "cortex-debug",
+            "name": "ST-link debug",
+            "cwd" : "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/bin/STM32F429zi_uC_platform",
+            "serverArgs": [],
+            "servertype": "stutil",
+            "device": "STM32F429ZI",
+            "interface": "swd",
+            "runToEntryPoint": "main",
         }
     ],
 }
